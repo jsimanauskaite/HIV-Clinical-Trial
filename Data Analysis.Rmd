@@ -17,7 +17,7 @@ hist(aids$time)
 
 fit <- survfit(Surv(time,censor)~tx, data = aids)
 plot(fit,lty= 1:2)
-legend(1,.2,c("treatment","control"),lty=1:2)
+#legend(1,.2,c("treatment","control"),lty=1:2)
 
 ```
  
