@@ -11,5 +11,6 @@ library(plyr)
 aids <- read.csv( "http://pages.pomona.edu/~jsh04747/courses/math150/AIDSdata.csv")
 
 summary(aids)
+hist(aids$time)
 ```
  
