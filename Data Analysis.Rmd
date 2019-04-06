@@ -16,10 +16,8 @@ aids <- read.csv( "http://pages.pomona.edu/~jsh04747/courses/math150/AIDSdata.cs
 summary(aids)
 hist(aids$time)
 
-<<<<<<< HEAD
+###Data Plots
 
-=======
->>>>>>> 70b24c6939f13e22bc2fa0f4a3643b8f6bc2e13b
 fit <- survfit(Surv(time,censor)~tx, data = aids)
 ggsurvplot(fit,data = aids,conf.int = FALSE)
 
