@@ -9,9 +9,14 @@ knitr::opts_chunk$set(message=FALSE, warning=FALSE, fig.height=3, fig.width=5, f
 library(tidyverse)
 library(broom)
 library(plyr)
+library(survival)
+library(survminer)
 aids <- read.csv( "http://pages.pomona.edu/~jsh04747/courses/math150/AIDSdata.csv")
 
 summary(aids)
 hist(aids$time)
+
+aids_fit <- survfit(Surv(time, censor) ~ 1, data=aids)
+ggsurvplot(aids_fit, data=aids,  conf.int = TRUE)
 ```
  
