@@ -1,7 +1,7 @@
 ---
 title: "Data Analysis"
 author: "Juste Simanauskaite & Patricia Rivera"
-output: github_document
+output: html_document
 ---
 
 ```{r global_options, include=TRUE, message=FALSE, warning=FALSE}
