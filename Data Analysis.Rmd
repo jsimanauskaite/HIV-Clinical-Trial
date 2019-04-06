@@ -10,22 +10,20 @@ library(tidyverse)
 library(broom)
 library(plyr)
 library(survival)
+library(survminer)
 aids <- read.csv( "http://pages.pomona.edu/~jsh04747/courses/math150/AIDSdata.csv")
 
 summary(aids)
 hist(aids$time)
 
-<<<<<<< HEAD
 fit <- survfit(Surv(time,censor)~tx, data = aids)
-plot(fit,lty= 1:2)
-#legend(1,.2,c("treatment","control"),lty=1:2)
+ggsurvplot(fit,data = aids,conf.int = FALSE)
 
-=======
 aids_fit_time <- survfit(Surv(time, censor) ~ sex, data=aids)
 ggsurvplot(aids_fit_time, data=aids,  conf.int = TRUE)
 
 aids_fit_time.d <- survfit(Surv(time_d, censor_d) ~ sex, data=aids)
 ggsurvplot(aids_fit_time.d, data=aids,  conf.int = TRUE)
->>>>>>> 00b570dd8151b1e1a304e33d24c221810d0ef7a5
+
 ```
  
