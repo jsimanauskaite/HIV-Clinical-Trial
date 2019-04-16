@@ -1,7 +1,8 @@
 ---
 title: "Data Analysis"
 author: "Juste Simanauskaite & Patricia Rivera"
-output: pdf_document: default
+output: 
+  pdf_document: default
   html_document: default
 ---
 
