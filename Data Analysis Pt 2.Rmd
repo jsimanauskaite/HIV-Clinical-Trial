@@ -112,6 +112,10 @@ ggsurvplot(survfit(Surv(time_d,censor_d) ~ sex, data=aids),
            censor=F, conf.int=T, fun="cumhaz") + ggtitle("Estimated Hazard rates based on sex")
 
 
+
+
+
+ggsurvplot(survfit(Surv(time, censor)))
 #how tow modify so that sex is labeled as male and female
 
 
