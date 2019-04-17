@@ -35,7 +35,7 @@ pct <- round(slices/sum(slices)*100)
 lbls <- paste(lbls, pct) 
 lbls <- paste(lbls,"%",sep="") 
 pie3D(slices,labels=lbls,explode=0.1,
-   main="Gender Distribution ")
+   main="Gender Distribution ", cex.lab=0.1)
 ```
 The Pie Chart represents the gender distribution in the sample, with 84% male and 16% female.
 ```{r}
@@ -50,9 +50,10 @@ lbls <- c("White Non-Hispanic", "Black Non-Hispanic", "Hispanic","Asian, Pacific
 pct <- round(slices/sum(slices)*100)
 lbls <- paste(lbls, pct) 
 lbls <- paste(lbls,"%",sep="") 
-pie(slices,lbls,col = rainbow(length(lbls)) )
+pie(slices,lbls,col = rainbow(length(lbls)), cex=0.5 )
 
 ```
+
 ```{r}
 never<-sum(aids$ivdrug==1)
 cur<-sum(aids$ivdrug==2)
@@ -62,7 +63,7 @@ lbls <- c("Never", "Currently", "Previously")
 pct <- round(slices/sum(slices)*100)
 lbls <- paste(lbls, pct) 
 lbls <- paste(lbls,"%",sep="") 
-pie3D(slices,labels=lbls,explode=0.1,col=c("turquoise","magenta","salmon"),
+pie3D(slices,labels=lbls,explode=0.1,col=c("turquoise","magenta","salmon"),cex.sub=0.5,
    main="IV Drug Use History ")
 
 ```
@@ -96,6 +97,7 @@ coxph(Surv(time,censor) ~ sex, data=aids) %>% tidy()
 
 ggsurvplot(survfit(Surv(time,censor) ~ 1, data=aids), 
            censor=F, conf.int=T, fun="cumhaz") + ggtitle("Estimated Hazard rates")
+
 
 ggsurvplot(survfit(Surv(time,censor) ~ sex, data=aids), 
            censor=F, conf.int=T, fun="cumhaz") + ggtitle("Estimated Hazard rates based on sex")
