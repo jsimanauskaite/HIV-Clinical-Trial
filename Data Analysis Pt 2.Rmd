@@ -95,10 +95,10 @@ library(broom)
 coxph(Surv(time_d,censor_d) ~ sex , data=aids)  %>% tidy()
 coxph(Surv(time,censor) ~ sex, data=aids) %>% tidy()
 
-coxph(Surv(time,censor) ~ sex + raceth + ivdrug, data=aids) %>% tidy()
-cox.zph(coxph(Surv(time,censor) ~ sex + raceth + ivdrug, data=aids))
-coxph(Surv(time,censor) ~ sex * raceth * ivdrug, data=aids) %>% tidy()
-cox.zph(coxph(Surv(time,censor) ~ sex* raceth * ivdrug, data=aids))
+coxph(Surv(time,censor) ~ txgrp+ karnof, data=aids) %>% tidy()
+cox.zph(coxph(Surv(time,censor) ~ txgrp+karnof, data=aids))
+coxph(Surv(time,censor) ~ txgrp*karnof, data=aids) %>% tidy()
+cox.zph(coxph(Surv(time,censor) ~ txgrp*karnof, data=aids))
 
 ggsurvplot(survfit(Surv(time,censor) ~ 1, data=aids), 
            censor=F, conf.int=T, fun="cumhaz") + ggtitle("Estimated Hazard rates")
@@ -106,10 +106,11 @@ ggsurvplot(survfit(Surv(time,censor) ~ 1, data=aids),
 
 ggsurvplot(survfit(Surv(time,censor) ~ sex, data=aids), 
            censor=F, conf.int=T, fun="cumhaz") + ggtitle("Estimated Hazard rates based on sex")
+ggsurvplot(survfit(Surv(time,censor) ~ txgrp, data=aids), 
+           censor=F, conf.int=T, fun="cumhaz") + ggtitle("Estimated Hazard rates based on treatment group")
 
-
-ggsurvplot(survfit(Surv(time_d,censor_d) ~ sex, data=aids), 
-           censor=F, conf.int=T, fun="cumhaz") + ggtitle("Estimated Hazard rates based on sex")
+ggsurvplot(survfit(Surv(time,censor) ~ karnof, data=aids), 
+           censor=F, conf.int=T, fun="cumhaz") + ggtitle("Estimated Hazard rates based on ")
 
 
 
