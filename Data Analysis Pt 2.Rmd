@@ -1,0 +1,162 @@
+---
+title: "Data Analysis"
+author: "Juste Simanauskaite & Patricia Rivera"
+output: 
+  pdf_document: default
+  html_document: default
+
+---
+
+```{r global_options, include=TRUE, message=FALSE, warning=FALSE}
+knitr::opts_chunk$set(message=FALSE, warning=FALSE, fig.height=3, fig.width=5, fig.align="center")
+library(tidyverse)
+library(broom)
+library(plyr)
+library(survival)
+library(survminer)
+aids <- read.csv( "http://pages.pomona.edu/~jsh04747/courses/math150/AIDSdata.csv")
+dim(aids)
+summary(aids)
+
+```
+
+The data set contains a sample size equal to 851 participants and 16 different variables.
+
+```{r}
+library(plotrix)
+male<-sum(aids$sex==1)
+female<-sum(aids$sex==2)
+slices <- c(male, female) 
+lbls <- c("Male", "Female")
+pct <- round(slices/sum(slices)*100)
+lbls <- paste(lbls, pct) 
+lbls <- paste(lbls,"%",sep="") 
+pie3D(slices,labels=lbls,explode=0.1,
+   main="Gender Distribution ", cex.lab=0.1)
+```
+The Pie Chart represents the gender distribution in the sample, with 84% male and 16% female.
+```{r}
+wnh<-sum(aids$raceth==1)
+bnh<-sum(aids$raceth==2)
+h<-sum(aids$raceth==3)
+api<-sum(aids$raceth==4)
+aian<-sum(aids$raceth==5)
+oth<-sum(aids$raceth==6)
+slices <- c(wnh,bnh,h,api,aian,oth) 
+lbls <- c("White Non-Hispanic", "Black Non-Hispanic", "Hispanic","Asian, Pacific Islander", "American Indian, Alaskan Native", "Other/unknown")
+pct <- round(slices/sum(slices)*100)
+lbls <- paste(lbls, pct) 
+lbls <- paste(lbls,"%",sep="") 
+pie(slices,lbls,col = rainbow(length(lbls)), cex=0.5 )
+
+```
+
+```{r}
+never<-sum(aids$ivdrug==1)
+cur<-sum(aids$ivdrug==2)
+prev<-sum(aids$ivdrug==3)
+slices <- c(never,cur,prev) 
+lbls <- c("Never", "Currently", "Previously")
+pct <- round(slices/sum(slices)*100)
+lbls <- paste(lbls, pct) 
+lbls <- paste(lbls,"%",sep="") 
+pie3D(slices,labels=lbls,explode=0.1,col=c("turquoise","magenta","salmon"),cex.sub=0.5,
+   main="IV Drug Use History ")
+
+```
+
+
+```{r}
+hist(aids$time)
+
+###Data Plots
+
+fit <- survfit(Surv(time,censor)~tx, data = aids)
+ggsurvplot(fit,data = aids,conf.int = FALSE)
+
+aids_fit_time <- survfit(Surv(time, censor) ~ sex, data=aids)
+ggsurvplot(aids_fit_time, data=aids,  conf.int = TRUE)
+
+aids_fit_time.d <- survfit(Surv(time_d, censor_d) ~ sex, data=aids)
+ggsurvplot(aids_fit_time.d, data=aids,  conf.int = TRUE)
+
+```
+#Survival Analysis 
+```{r}
+#mutation of age
+aids <- read.csv( "http://pages.pomona.edu/~jsh04747/courses/math150/AIDSdata.csv")
+aids <- aids %>% 
+  mutate(age = ifelse(age <= 20, "under20", 
+                             ifelse(age <=30, "20-30",
+                                    ifelse(age <= 40, "30-40",
+                                           ifelse(age <=50, "40-50",
+                                                 ifelse(age <=60, "50-60",
+                                                        ifelse(age <=70, "60-70", "over70"))))))) %>%
+  mutate(age = factor(age,
+                       levels = c("under20", "20-30", "30-40","40-50", "50-60","60-70","over70")),  sex = ifelse(sex == 2, "male","female"))
+```
+
+```{r}
+library(survival)
+library (survminer)
+library(ggplot2)
+library(broom)
+
+coxph(Surv(time_d,censor_d) ~ sex , data=aids)  %>% tidy()
+coxph(Surv(time,censor) ~ sex, data=aids) %>% tidy()
+
+coxph(Surv(time,censor) ~ age+ txgrp+ karnof, data=aids) %>% tidy()
+cox.zph(coxph(Surv(time,censor) ~ age + txgrp+karnof, data=aids))
+coxph(Surv(time,censor) ~ age *txgrp*karnof, data=aids) %>% tidy()
+cox.zph(coxph(Surv(time,censor) ~ age *txgrp*karnof, data=aids))
+
+ggsurvplot(survfit(Surv(time,censor) ~ 1, data=aids), 
+           censor=F, conf.int=T, fun="cumhaz") + ggtitle("Estimated Hazard rates")
+
+
+ggsurvplot(survfit(Surv(time,censor) ~ sex, data=aids), 
+           censor=F, conf.int=T, fun="cumhaz") + ggtitle("Estimated Hazard rates based on sex")
+ggsurvplot(survfit(Surv(time,censor) ~ txgrp, data=aids), 
+           censor=F, conf.int=T, fun="cumhaz") + ggtitle("Estimated Hazard rates based on treatment group")
+
+ggsurvplot(survfit(Surv(time,censor) ~ karnof, data=aids), 
+           censor=F, conf.int=T, fun="cumhaz") + ggtitle("Estimated Hazard rates based on klarnfsky")
+
+ggsurvplot(survfit(Surv(time,censor) ~ age, data=aids), 
+           censor=F, conf.int=T, fun="cumhaz") + ggtitle("Estimated Hazard rates based on age")
+
+
+
+```
+
+ 
+ 
+# Juste's "Something New"
+I will be analyzing the Weibull PH regression (parametric survival model). 
+
+### 1. What is goign on? What is the topic?
+
+Weibull model is a parametric model,which provides a flexible way for the inclusion of covariates of the survival times. It has been previously determined that when the shape of parameter is known, the Weibull model shows better results than the Cox proportional hazards model, but when the shape parameter is unknown, the Cox proportional hazards model and the Weibull model give comparable results.
+### 2. How it is relevant? How it relates to survival analysis/analysis at hand?
+
+Fully parametric models have many advantages in analyzing survival data, they can be more convenient for representing complex data structures and processes. Studies have indicated that under certain situations when the shape of the survival time is determined, the parametric models are more powerful and efficient than Cox’s regression model (ex. Kleinbaum D, Klein M. Survival analysis: a self-learning text. New York: Springer; 2005). Furthermore, if the only basic assumption of this model (proportional hazards) is not met, parametric models are suitable alternative models to be used instead of Cox’s regression analysis.
+
+### 3. Resources to learn about the topic.
+
+I have been researching articles and scientific journals that provide insights into this model and comparisons between the Cox PH and teh parametric model. Sources include: 
+a) https://krex.k-state.edu/dspace/bitstream/handle/2097/8787/AngelaCrumer2011.pdf 
+b) http://nematilab.info/bmijc/assets/weibull_cox.pdf 
+c) https://www.jstatsoft.org/article/view/v070i08 
+
+### 4. What will be challenging about learning something new?
+
+Taking a completely new model of analyzing survival data is particulalrly difficult since the mathematical derivations and notations are also very varied from what we have seen in class. Although, I do remember some of the ideas behind parametric functions, their applications to statistical models are much more challenging than I have expected. Therefore, it will require me a lot of time and extensive research to be able to understand and learn how to apply this model to our data and other instances of survival analysis.
+
+```{r}
+### some trials of applications of parametric functions in r
+library(flexsurv)
+
+flexsurvreg(Surv(time, censor) ~ age, data = aids,  dist = "weibull")
+
+```
+
