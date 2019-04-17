@@ -1,0 +1,112 @@
+---
+title: "Data Analysis"
+author: "Juste Simanauskaite & Patricia Rivera"
+output: 
+  pdf_document: default
+  html_document: default
+
+---
+
+Some test words here
+
+
+```{r global_options, include=TRUE, message=FALSE, warning=FALSE}
+knitr::opts_chunk$set(message=FALSE, warning=FALSE, fig.height=3, fig.width=5, fig.align="center")
+library(tidyverse)
+library(broom)
+library(plyr)
+library(survival)
+library(survminer)
+aids <- read.csv( "http://pages.pomona.edu/~jsh04747/courses/math150/AIDSdata.csv")
+dim(aids)
+summary(aids)
+
+```
+
+The data set contains a sample size equal to 851 participants and 16 different variables.
+
+```{r}
+library(plotrix)
+male<-sum(aids$sex==1)
+female<-sum(aids$sex==2)
+slices <- c(male, female) 
+lbls <- c("Male", "Female")
+pct <- round(slices/sum(slices)*100)
+lbls <- paste(lbls, pct) 
+lbls <- paste(lbls,"%",sep="") 
+pie3D(slices,labels=lbls,explode=0.1,
+   main="Gender Distribution ")
+```
+The Pie Chart represents the gender distribution in the sample, with 84% male and 16% female.
+```{r}
+wnh<-sum(aids$raceth==1)
+bnh<-sum(aids$raceth==2)
+h<-sum(aids$raceth==3)
+api<-sum(aids$raceth==4)
+aian<-sum(aids$raceth==5)
+oth<-sum(aids$raceth==6)
+slices <- c(wnh,bnh,h,api,aian,oth) 
+lbls <- c("White Non-Hispanic", "Black Non-Hispanic", "Hispanic","Asian, Pacific Islander", "American Indian, Alaskan Native", "Other/unknown")
+pct <- round(slices/sum(slices)*100)
+lbls <- paste(lbls, pct) 
+lbls <- paste(lbls,"%",sep="") 
+pie(slices,lbls,col = rainbow(length(lbls)) )
+
+```
+```{r}
+never<-sum(aids$ivdrug==1)
+cur<-sum(aids$ivdrug==2)
+prev<-sum(aids$ivdrug==3)
+slices <- c(never,cur,prev) 
+lbls <- c("Never", "Currently", "Previously")
+pct <- round(slices/sum(slices)*100)
+lbls <- paste(lbls, pct) 
+lbls <- paste(lbls,"%",sep="") 
+pie3D(slices,labels=lbls,explode=0.1,col=c("turquoise","magenta","salmon"),
+   main="IV Drug Use History ")
+
+```
+
+
+```{r}
+hist(aids$time)
+
+###Data Plots
+
+fit <- survfit(Surv(time,censor)~tx, data = aids)
+ggsurvplot(fit,data = aids,conf.int = FALSE)
+
+aids_fit_time <- survfit(Surv(time, censor) ~ sex, data=aids)
+ggsurvplot(aids_fit_time, data=aids,  conf.int = TRUE)
+
+aids_fit_time.d <- survfit(Surv(time_d, censor_d) ~ sex, data=aids)
+ggsurvplot(aids_fit_time.d, data=aids,  conf.int = TRUE)
+
+```
+#Survival Analysis
+
+```{r}
+library(survival)
+library (survminer)
+library(ggplot2)
+library(broom)
+
+coxph(Surv(time_d,censor_d) ~ sex , data=aids)  %>% tidy()
+coxph(Surv(time,censor) ~ sex, data=aids) %>% tidy()
+
+ggsurvplot(survfit(Surv(time,censor) ~ 1, data=aids), 
+           censor=F, conf.int=T, fun="cumhaz") + ggtitle("Estimated Hazard rates")
+
+ggsurvplot(survfit(Surv(time,censor) ~ sex, data=aids), 
+           censor=F, conf.int=T, fun="cumhaz") + ggtitle("Estimated Hazard rates based on sex")
+
+ggsurvplot(survfit(Surv(time_d,censor_d) ~ sex, data=aids), 
+           censor=F, conf.int=T, fun="cumhaz") + ggtitle("Estimated Hazard rates based on sex")
+
+
+#how tow modify so that sex is labeled as male and female
+```
+
+ 
+ 
+###Juste's "Something New"
