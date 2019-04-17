@@ -7,9 +7,6 @@ output:
 
 ---
 
-Some test words here
-
-
 ```{r global_options, include=TRUE, message=FALSE, warning=FALSE}
 knitr::opts_chunk$set(message=FALSE, warning=FALSE, fig.height=3, fig.width=5, fig.align="center")
 library(tidyverse)
@@ -134,4 +131,32 @@ ggsurvplot(survfit(Surv(time,censor) ~ age, data=aids),
 
  
  
-###Juste's "Something New"
+# Juste's "Something New"
+I will be analyzing the Weibull PH regression (parametric survival model). 
+
+### 1. What is goign on? What is the topic?
+
+Weibull model is a parametric model,which provides a flexible way for the inclusion of covariates of the survival times. It has been previously determined that when the shape of parameter is known, the Weibull model shows better results than the Cox proportional hazards model, but when the shape parameter is unknown, the Cox proportional hazards model and the Weibull model give comparable results.
+### 2. How it is relevant? How it relates to survival analysis/analysis at hand?
+
+Fully parametric models have many advantages in analyzing survival data, they can be more convenient for representing complex data structures and processes. Studies have indicated that under certain situations when the shape of the survival time is determined, the parametric models are more powerful and efficient than Cox’s regression model (ex. Kleinbaum D, Klein M. Survival analysis: a self-learning text. New York: Springer; 2005). Furthermore, if the only basic assumption of this model (proportional hazards) is not met, parametric models are suitable alternative models to be used instead of Cox’s regression analysis.
+
+### 3. Resources to learn about the topic.
+
+I have been researching articles and scientific journals that provide insights into this model and comparisons between the Cox PH and teh parametric model. Sources include: 
+a) https://krex.k-state.edu/dspace/bitstream/handle/2097/8787/AngelaCrumer2011.pdf 
+b) http://nematilab.info/bmijc/assets/weibull_cox.pdf 
+c) https://www.jstatsoft.org/article/view/v070i08 
+
+### 4. What will be challenging about learning something new?
+
+Taking a completely new model of analyzing survival data is particulalrly difficult since the mathematical derivations and notations are also very varied from what we have seen in class. Although, I do remember some of the ideas behind parametric functions, their applications to statistical models are much more challenging than I have expected. Therefore, it will require me a lot of time and extensive research to be able to understand and learn how to apply this model to our data and other instances of survival analysis.
+
+```{r}
+### some trials of applications of parametric functions in r
+library(flexsurv)
+
+flexsurvreg(Surv(time, censor) ~ age, data = aids,  dist = "weibull")
+
+```
+
