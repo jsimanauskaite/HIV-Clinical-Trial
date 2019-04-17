@@ -114,9 +114,17 @@ ggsurvplot(survfit(Surv(time,censor) ~ karnof, data=aids),
 
 
 
+ggsurvplot(survfit(Surv(time, censor)~hemophil, data = aids),
+           censor=F, conf.int = T, fun = "cumhaz")
 
 
-ggsurvplot(survfit(Surv(time, censor)))
+ggsurvplot(survfit(Surv(time, censor)~ivdrug, data = aids),
+           censor=F, conf.int = T, fun = "cumhaz")
+
+
+coxph(Surv(time,censor) ~ ivdrug, data=aids) %>% tidy()
+
+coxph(Surv(time,censor) ~ ivdrug*karnof, data=aids) %>% tidy()
 #how tow modify so that sex is labeled as male and female
 
 
