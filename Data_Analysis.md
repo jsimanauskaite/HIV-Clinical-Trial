@@ -1,11 +1,20 @@
 Data Analysis
 ================
+<<<<<<< HEAD
+=======
+Juste Simanauskaite & Patricia Rivera
+>>>>>>> 7cef86ad2399b55ae3e3ade50cdbbd37e007e49f
 
 ``` r
 knitr::opts_chunk$set(message=FALSE, warning=FALSE, fig.height=3, fig.width=5, fig.align="center")
 library(tidyverse)
 library(broom)
 library(plyr)
+<<<<<<< HEAD
+=======
+library(survival)
+library(survminer)
+>>>>>>> 7cef86ad2399b55ae3e3ade50cdbbd37e007e49f
 aids <- read.csv( "http://pages.pomona.edu/~jsh04747/courses/math150/AIDSdata.csv")
 
 summary(aids)
@@ -42,6 +51,22 @@ summary(aids)
 
 ``` r
 hist(aids$time)
+<<<<<<< HEAD
 ```
 
 ![](Data_Analysis_files/figure-markdown_github/global_options-1.png)
+=======
+
+aids_fit_time <- survfit(Surv(time, censor) ~ sex, data=aids)
+ggsurvplot(aids_fit_time, data=aids,  conf.int = TRUE)
+```
+
+![](Data_Analysis_files/figure-markdown_github/global_options-1.png)![](Data_Analysis_files/figure-markdown_github/global_options-2.png)
+
+``` r
+aids_fit_time.d <- survfit(Surv(time_d, censor_d) ~ sex, data=aids)
+ggsurvplot(aids_fit_time.d, data=aids,  conf.int = TRUE)
+```
+
+![](Data_Analysis_files/figure-markdown_github/global_options-3.png)
+>>>>>>> 7cef86ad2399b55ae3e3ade50cdbbd37e007e49f
