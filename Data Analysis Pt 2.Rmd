@@ -153,7 +153,13 @@ coxph(Surv(time,censor)~sex+tx+age+txgrp, data = aids) %>% tidy()
 #Patricia's "Something New"
 I will be doing a power analysis by simulating survival analysis curves
 
+### 1. What is the topic?
 
+### 2. How it is relevant? How it relates to survival analysis/analysis at hand?
+
+### 3. Resources to learn about the topic.
+
+### 4. What will be challenging about learning something new?
 =======
 # Juste's "Something New"
 I will be analyzing the Weibull PH regression (parametric survival model). 
