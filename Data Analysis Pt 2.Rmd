@@ -151,8 +151,9 @@ coxph(Surv(time,censor)~sex+tx+age+txgrp, data = aids) %>% tidy()
 
 
 #Patricia's "Something New"
+I will be doing a power analysis by simulating survival analysis curves
 
-j
+
 =======
 # Juste's "Something New"
 I will be analyzing the Weibull PH regression (parametric survival model). 
