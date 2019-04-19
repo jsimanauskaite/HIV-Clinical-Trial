@@ -154,8 +154,10 @@ coxph(Surv(time,censor)~sex+tx+age+txgrp, data = aids) %>% tidy()
 I will be doing a power analysis by simulating survival analysis curves
 
 ### 1. What is the topic?
+The topic is using sim.survdata in R to simulate survival data. Using that simulated data, we will make that the alternative and control for the coefficient beta by setting it equal to some value. Then using power analysis, we will see how many times we reject $H_0$. 
 
 ### 2. How it is relevant? How it relates to survival analysis/analysis at hand?
+Power analysis relates to survival analysis because if power is large after comparing our data to the simulated survival data, this tells us that there is a high chance that we would reject the null in favor of the alternative (control versus treatment?)
 
 ### 3. Resources to learn about the topic.
 Below are some of the resources I have begun to use to learn about creating simulations of survival curves and performing power analysis:
