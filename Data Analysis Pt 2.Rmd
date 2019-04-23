@@ -130,11 +130,8 @@ ggsurvplot(survfit(Surv(time,censor) ~ age, data=aids),
            censor=F, conf.int=T, fun="cumhaz") + ggtitle("Estimated Hazard rates based on age")
 
 
-
-
-
-#ggsurvplot(survfit(Surv(time, censor)~hemophil, data = aids),
-           #censor=F, conf.int = T, fun = "cumhaz")
+ggsurvplot(survfit(Surv(time, censor)~hemophil, data = aids),
+           censor=F, conf.int = T, fun = "cumhaz")
 
 
 ggsurvplot(survfit(Surv(time, censor)~ivdrug, data = aids),
@@ -144,7 +141,6 @@ ggsurvplot(survfit(Surv(time, censor)~ivdrug, data = aids),
 coxph(Surv(time,censor) ~ ivdrug, data=aids) %>% tidy()
 
 coxph(Surv(time,censor) ~ ivdrug*karnof, data=aids) %>% tidy()
-#how tow modify so that sex is labeled as male and female
 
 
 
@@ -171,7 +167,7 @@ b). http://www.icssc.org/documents/advbiosgoa/tab%2026.00_survss.pdf
 
 ### 4. What will be challenging about learning something new?
 Learning something new will be challenging because in this case, the concept of power analysis is something I just recently learned in Intro to Statistics. So learning to apply this concept in the context of survival analysis curves will be a challenge for me to learn. Learning how to simulate survival curves will also be challenging because I will have to learn how to use and interpret new functions in R.
-=======
+
 # Juste's "Something New"
 I will be analyzing the Shoenfeld residuals for the Cox PH model.
 
@@ -181,35 +177,55 @@ Cox proportional hazards (PH) model is considered a great way to identify combin
 
 ### 3. Resources to learn about the topic.
 
-I have been researching articles and scientific journals that provide insights into this model and comparisons between the Cox PH and teh parametric model. Sources include: 
-a) https://krex.k-state.edu/dspace/bitstream/handle/2097/8787/AngelaCrumer2011.pdf 
-b) http://nematilab.info/bmijc/assets/weibull_cox.pdf 
-c) https://www.jstatsoft.org/article/view/v070i08 
+I have been researching articles and scientific journals that provide insights into tthe Schoenfeld residuals and their use in the Cox PH model. 
+Sources include: 
 
 ### 4. What will be challenging about learning something new?
 
 Taking a completely new model of analyzing survival data is particulalrly difficult since the mathematical derivations and notations are also very varied from what we have seen in class. Although, I do remember some of the ideas behind parametric functions, their applications to statistical models are much more challenging than I have expected. Therefore, it will require me a lot of time and extensive research to be able to understand and learn how to apply this model to our data and other instances of survival analysis.
 
+#Explanation of the Theory Behind Schoenfeld Residuals
+
+Let $z_{ij}(t)$ be the $j^{th}$ covariate of the $i^{th}$ unit, where $i=1,2,...,n$ and $j=1,2...,p$
+
+This notation indicates that $z_{ij}$ is allowed to vary as a function of the time scale.
+
+As we know from lecture, the Cox PH model assumes that $h(t)$ of the $i^{th}$ individual satisfies: 
+
+1) $h_i(t)=h_0(t)e^{z_i(t)\beta}$
+      where: 
+      $h_0$ -> baseline hazard
+      $z_i(t)$ -> 1 x $p$ vector of covariates for unit $i$ each of which can be time fixed or time-varying.
+
+2) However, another possibility has been presented by Therneau and Granbsh in 2000, where they proposed an idea that there ciuyld be an alternative to the current Cox model, where the coefficient of the estimate could also be varying as a function of time.
+
+The new hazard function would look like this: $h_i(t)=h_0(t)e^{z_i(t)\beta(t)}$
+
+Therefore, in order to examine thee two models in a case when $\beta=\beta(t)$ requires a residual analysis that could indicate whether a model should consider a covariate as a variable with time.
+
+---
+Due to the fact that that some observations might be censored and in particular, regarding the Cox PH model, the baseline hazard is not estimated, in oprder to analyse the residuals a particular score process. The risk score for unit $i$ at time $t$ is thought to be $r_i(t)=e^{z_i(t)\beta}$, where $Y_i(t)$ is the indicator function and $Y_i(t)=1$ indicates a poitn in which $i$ is under risk and thus observation and it is equal to 0 in other occasions.
+
+---
+
+The Schoenfeld residuals are given by the equations:
+1) $s_k=Z_{(k)}-\sum_iY_i(t_k)r_i(t_k)Z_i(t_k)/\sum_iY_i(t_k)r_i(t_k)$
+2) $s_k=Z_{(k)}-\bar{z}(\hat{\beta},t_k)$
+
+In this case, the $Z(k)$ is the covariate vector of the particular unit that is experiencing the evnt at time $k$; $\hat{\beta}$ is the estimate of $\beta$ and $\bar{z}(\hat{\beta},t_k)$ is the wighted mean of covariate values.
+
+Furthermore, the weighted variance can be represented by the derived equation at the $k^{th}$ time as
+
+$V(\beta,t_k)=\sum_iY_i(t_k)r_i(t_k)Z_i(t_k)-\bar{z}(\hat{\beta},t_k)'Z_i(t_k)-\bar{z}(\hat{\beta},t_k)/\sum_iY_i(t_k)r_i(t_k)$
+
+From this, we can scale the Schoenfeld residuals by $V(\beta,t_k)$ of X at $t_k$ via the equation:
+
+$s^*_k=V^{-1}(\hat{\beta},t_k)s_k$
+
+
+Schoenfeld:
 ```{r}
-### some trials of applications of parametric functions in r
-library(flexsurv)
 
-flexsurvreg(Surv(time, censor) ~ age, data = aids,  dist = "weibull")
-
-```
-#More about the Weibull Model
-The Weibull model is very similar to the Cox PH model we have explored in class. The Weibull Model usually used when the exponential distribution is not suffiecient to come up with a model. 
-The exponential desnity function is 
-$f(t)= \lambda exp(-\lambda(t))$, for $\lambda>0$ and $t>0$
-With a constant hazard function of $h(t)=\lambda$
-
-```{r}
-letters
-
-```
-
-SHoenfeld:
-```{r}
 veteran.ph <- coxph(Surv(time,status) ~ trt, data=veteran) 
 cox.veteran <- cox.zph(veteran.ph)
 cox.veteran
