@@ -192,10 +192,10 @@ This notation indicates that $z_{ij}$ is allowed to vary as a function of the ti
 
 As we know from lecture, the Cox PH model assumes that $h(t)$ of the $i^{th}$ individual satisfies: 
 
-1) $h_i(t)=h_0(t)e^{z_i(t)\beta}$
-      where: 
-      $h_0$ -> baseline hazard
-      $z_i(t)$ -> 1 x $p$ vector of covariates for unit $i$ each of which can be time fixed or time-varying.
+* $h_i(t)=h_0(t)e^{z_i(t)\beta}$
+       where: 
+  + $h_0$ -> baseline hazard
+  + $z_i(t)$ -> 1 x $p$ vector of covariates for unit $i$ each of which can be time fixed or time-varying.
 
 2) However, another possibility has been presented by Therneau and Granbsh in 2000, where they proposed an idea that there ciuyld be an alternative to the current Cox model, where the coefficient of the estimate could also be varying as a function of time.
 
@@ -203,10 +203,10 @@ The new hazard function would look like this: $h_i(t)=h_0(t)e^{z_i(t)\beta(t)}$
 
 Therefore, in order to examine thee two models in a case when $\beta=\beta(t)$ requires a residual analysis that could indicate whether a model should consider a covariate as a variable with time.
 
----
+***
 Due to the fact that that some observations might be censored and in particular, regarding the Cox PH model, the baseline hazard is not estimated, in oprder to analyse the residuals a particular score process. The risk score for unit $i$ at time $t$ is thought to be $r_i(t)=e^{z_i(t)\beta}$, where $Y_i(t)$ is the indicator function and $Y_i(t)=1$ indicates a poitn in which $i$ is under risk and thus observation and it is equal to 0 in other occasions.
 
----
+***
 
 The Schoenfeld residuals are given by the equations:
 1) $s_k=Z_{(k)}-\sum_iY_i(t_k)r_i(t_k)Z_i(t_k)/\sum_iY_i(t_k)r_i(t_k)$
