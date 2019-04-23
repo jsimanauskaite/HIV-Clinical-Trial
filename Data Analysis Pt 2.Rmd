@@ -2,7 +2,11 @@
 title: "Data Analysis"
 author: "Juste Simanauskaite & Patricia Rivera"
 output: 
-  pdf_document: default
+  pdf_document: 
+    highlight: zenburn
+    toc: true
+    toc_depth: 6
+    
   html_document: default
 
 ---
@@ -14,6 +18,7 @@ library(broom)
 library(plyr)
 library(survival)
 library(survminer)
+
 aids <- read.csv( "http://pages.pomona.edu/~jsh04747/courses/math150/AIDSdata.csv")
 dim(aids)
 summary(aids)
@@ -34,7 +39,7 @@ lbls <- paste(lbls,"%",sep="")
 pie3D(slices,labels=lbls,explode=0.1,
    main="Gender Distribution ", cex.lab=0.1)
 ```
-The Pie Chart represents the gender distribution in the sample, with 84% male and 16% female.
+The Pie Chart represents the gender distribution in the sample, with 84% male and 16% female. This shows the potential for the data to not be able to correctly represent the difference of the data variance by gender, if there were to be one. Therefore, gender is something to look into in future data analysis.
 ```{r}
 wnh<-sum(aids$raceth==1)
 bnh<-sum(aids$raceth==2)
@@ -50,7 +55,7 @@ lbls <- paste(lbls,"%",sep="")
 pie(slices,lbls,col = rainbow(length(lbls)), cex=0.5 )
 
 ```
-
+The distribution od race/ethnicity shows that the greatest number of participants consists of white non-hispanic identifying indiciduals, with black non-hispanic following and hispanic as the 3rd largest represented group.
 ```{r}
 never<-sum(aids$ivdrug==1)
 cur<-sum(aids$ivdrug==2)
@@ -64,7 +69,7 @@ pie3D(slices,labels=lbls,explode=0.1,col=c("turquoise","magenta","salmon"),cex.s
    main="IV Drug Use History ")
 
 ```
-
+From this chart we see that most of the participants (84%) have never used IV drugs, whereas 16% of participants have some type of history of usage and none of the participants reported to be currently using the drugs.
 
 ```{r}
 hist(aids$time)
@@ -126,11 +131,8 @@ ggsurvplot(survfit(Surv(time,censor) ~ age, data=aids),
            censor=F, conf.int=T, fun="cumhaz") + ggtitle("Estimated Hazard rates based on age")
 
 
-
-
-
-#ggsurvplot(survfit(Surv(time, censor)~hemophil, data = aids),
-           #censor=F, conf.int = T, fun = "cumhaz")
+ggsurvplot(survfit(Surv(time, censor)~hemophil, data = aids),
+           censor=F, conf.int = T, fun = "cumhaz")
 
 
 ggsurvplot(survfit(Surv(time, censor)~ivdrug, data = aids),
@@ -140,7 +142,6 @@ ggsurvplot(survfit(Surv(time, censor)~ivdrug, data = aids),
 coxph(Surv(time,censor) ~ ivdrug, data=aids) %>% tidy()
 
 coxph(Surv(time,censor) ~ ivdrug*karnof, data=aids) %>% tidy()
-#how tow modify so that sex is labeled as male and female
 
 
 
@@ -167,33 +168,99 @@ b). http://www.icssc.org/documents/advbiosgoa/tab%2026.00_survss.pdf
 
 ### 4. What will be challenging about learning something new?
 Learning something new will be challenging because in this case, the concept of power analysis is something I just recently learned in Intro to Statistics. So learning to apply this concept in the context of survival analysis curves will be a challenge for me to learn. Learning how to simulate survival curves will also be challenging because I will have to learn how to use and interpret new functions in R.
-=======
+
+
+
+
+```{r}
+
+```
+
+
 # Juste's "Something New"
-I will be analyzing the Weibull PH regression (parametric survival model). 
+I will be analyzing the Shoenfeld residuals for the Cox PH model.
 
-### 1. What is goign on? What is the topic?
+### 1. What is goign on? What is the topic? 2. How it is relevant? How it relates to survival analysis/analysis at hand?
 
-Weibull model is a parametric model,which provides a flexible way for the inclusion of covariates of the survival times. It has been previously determined that when the shape of parameter is known, the Weibull model shows better results than the Cox proportional hazards model, but when the shape parameter is unknown, the Cox proportional hazards model and the Weibull model give comparable results.
-### 2. How it is relevant? How it relates to survival analysis/analysis at hand?
-
-Fully parametric models have many advantages in analyzing survival data, they can be more convenient for representing complex data structures and processes. Studies have indicated that under certain situations when the shape of the survival time is determined, the parametric models are more powerful and efficient than Cox’s regression model (ex. Kleinbaum D, Klein M. Survival analysis: a self-learning text. New York: Springer; 2005). Furthermore, if the only basic assumption of this model (proportional hazards) is not met, parametric models are suitable alternative models to be used instead of Cox’s regression analysis.
+Cox proportional hazards (PH) model is considered a great way to identify combined effects of several covariates on the relative risk (hazard). This model assumes that the hazards of the different strata formed by the levels of the covariates are proportional. This proportional hazards assumption is particularly important and can be tested via three different clases of tests. The first class is focused on the piecewise estimation of models for subsets of data defined by stratification of time. The second one considers the interactions between covariates and some function of time. Final, third one is based on examinations of regression residuals. The Schoenfeld Residuals are a part of the third class of proportional hazard assumption testing and I will be exploring it in order to be able to eradicate a method for testing for the PH assumption in the current and future data set analyses. This topic is particularly important in relation to survival analysis since it provides an idea of whether the model is appropriate for the data set at hand and whether some covariates should be considered as variants of time in order to supply the best model for prediction of proportional hazards.
 
 ### 3. Resources to learn about the topic.
 
-I have been researching articles and scientific journals that provide insights into this model and comparisons between the Cox PH and teh parametric model. Sources include: 
-a) https://krex.k-state.edu/dspace/bitstream/handle/2097/8787/AngelaCrumer2011.pdf 
-b) http://nematilab.info/bmijc/assets/weibull_cox.pdf 
-c) https://www.jstatsoft.org/article/view/v070i08 
+I have been researching articles and scientific journals that provide insights into tthe Schoenfeld residuals and their use in the Cox PH model. 
+Sources include: 
+
+1. https://onlinelibrary.wiley.com/doi/full/10.1111/ajps.12176
+2. https://rstudio-pubs-static.s3.amazonaws.com/39354_34153ff19e624116bd2fbdec7d2534aa.html 
 
 ### 4. What will be challenging about learning something new?
 
 Taking a completely new model of analyzing survival data is particulalrly difficult since the mathematical derivations and notations are also very varied from what we have seen in class. Although, I do remember some of the ideas behind parametric functions, their applications to statistical models are much more challenging than I have expected. Therefore, it will require me a lot of time and extensive research to be able to understand and learn how to apply this model to our data and other instances of survival analysis.
 
+#Explanation of the Theory Behind Schoenfeld Residuals
+
+Let $z_{ij}(t)$ be the $j^{th}$ covariate of the $i^{th}$ unit, where $i=1,2,...,n$ and $j=1,2...,p$
+
+This notation indicates that $z_{ij}$ is allowed to vary as a function of the time scale.
+
+1) As we know from lecture, the Cox PH model assumes that $h(t)$ of the $i^{th}$ individual satisfies: 
+
+* $h_i(t)=h_0(t)e^{z_i(t)\beta}$ where: 
+  + $h_0$ -> baseline hazard
+  + $z_i(t)$ -> 1 x $p$ vector of covariates for unit $i$ each of which can be time fixed or time-varying.
+
+2) However, another possibility has been presented by Therneau and Granbsh in 2000, where they proposed an idea that there ciuyld be an alternative to the current Cox model, where the coefficient of the estimate could also be varying as a function of time.
+
+> The new hazard function would look like this: $h_i(t)=h_0(t)e^{z_i(t)\beta(t)}$
+
+Therefore, in order to examine thee two models in a case when $\beta=\beta(t)$ requires a residual analysis that could indicate whether a model should consider a covariate as a variable with time.
+
+***
+Due to the fact that that some observations might be censored and in particular, regarding the Cox PH model, the baseline hazard is not estimated, in oprder to analyse the residuals a particular score process. The risk score for unit $i$ at time $t$ is thought to be $r_i(t)=e^{z_i(t)\beta}$, where $Y_i(t)$ is the indicator function and $Y_i(t)=1$ indicates a point in which $i$ is under risk and thus observation and it is equal to 0 in other occasions.
+
+***
+
+The Schoenfeld residuals are given by the equations:
+
+1. $s_k=Z_{(k)}-\frac{\sum_iY_i(t_k)r_i(t_k)Z_i(t_k)}{\sum_iY_i(t_k)r_i(t_k)}$
+2. $s_k=Z_{(k)}-\bar{z}(\hat{\beta},t_k)$
+
+In this case, the $Z(k)$ is the covariate vector of the particular unit that is experiencing the evnt at time $k$; $\hat{\beta}$ is the estimate of $\beta$ and $\bar{z}(\hat{\beta},t_k)$ is the wighted mean of covariate values.
+
+Furthermore, the weighted variance can be represented by the derived equation at the $k^{th}$ time as
+
+$V(\beta,t_k)=\sum_iY_i(t_k)r_i(t_k)Z_i(t_k)-\bar{z}(\hat{\beta},t_k)'Z_i(t_k)-\frac{\bar{z}(\hat{\beta},t_k)}{\sum_iY_i(t_k)r_i(t_k)}$
+
+From this, we can scale the Schoenfeld residuals by $V(\beta,t_k)$ of X at $t_k$ via the equation:
+
+$s^*_k=V^{-1}(\hat{\beta},t_k)s_k$
+
+The scaled Schoenfeld residuals can also be defined as follows:
+
+$s^*_k=m\sum^d_{k=1}V(\hat{\beta},t_k)s_k$
+
+here, $m$ is the total number of deaths in the data set.
+
+Following the calculations, the residuals are plotted against time in order to test the prportional hazards assumption. If the assumption is correct, the residuals should be fiting around the line centered at zero (y=0). The further away this predicted line is form the horizontal of (y=0) the more likely one is to call the PH assumption to question and determine whether it is met through the model.
+
+***
+> To go a little deeper into the analysis of the resiaul calculation, one can look at the calculations of the test statistic for this residual mdoel.
+
+By producing a least squares slope of regression and assuming a relationship between $s^*_{kj}$ and $t_{kj}$ or some function $g(t_k)$ allows to derive a test statistic for the proportional hazards assumption in regards to the $j^{th}$ covariate, which is given by:
+
+$T_j=\frac{[\sum^d_{k=1}(g(t_k)-\hat{g})s^8_{kj}]^2}{dI^{jj}\sum^d_{k=1}(g(t_k)-\hat{g})^2}$
+
+Here, the distribution is asymptotical as $X^2(1)$ stating the null hypothesis that the relationship between the covariate, in this case $j$ and the evnt time follows the assumption of PH.
+
+
+
+Schoenfeld:
 ```{r}
-### some trials of applications of parametric functions in r
-library(flexsurv)
 
-flexsurvreg(Surv(time, censor) ~ age, data = aids,  dist = "weibull")
-
+veteran.ph <- coxph(Surv(time,status) ~ trt, data=veteran) 
+cox.veteran <- cox.zph(veteran.ph)
+cox.veteran
+ggcoxzph(cox.veteran)
+ggcoxdiagnostics(veteran.ph, type="schoenfeld")
 ```
+
 
