@@ -131,10 +131,47 @@ ggsurvplot(survfit(Surv(time,censor) ~ age, data=aids),
 
 
 
+
+
+#ggsurvplot(survfit(Surv(time, censor)~hemophil, data = aids),
+           #censor=F, conf.int = T, fun = "cumhaz")
+
+
+ggsurvplot(survfit(Surv(time, censor)~ivdrug, data = aids),
+           censor=F, conf.int = T, fun = "cumhaz")
+
+
+coxph(Surv(time,censor) ~ ivdrug, data=aids) %>% tidy()
+
+coxph(Surv(time,censor) ~ ivdrug*karnof, data=aids) %>% tidy()
+#how tow modify so that sex is labeled as male and female
+
+
+
+coxph(Surv(time,censor)~sex+tx+age+txgrp, data = aids) %>% tidy()
+
 ```
 
- 
- 
+
+
+#Patricia's "Something New"
+I will be doing a power analysis by simulating survival analysis curves
+
+### 1. What is the topic?
+The topic is using sim.survdata in R to simulate survival data. Using that simulated data, we will make that the alternative and control for the coefficient beta by setting it equal to some value. Then using power analysis, we will see how many times we reject $H_0$. 
+
+### 2. How it is relevant? How it relates to survival analysis/analysis at hand?
+Power analysis relates to survival analysis because if power is large after comparing our data to the simulated survival data, this tells us that there is a high chance that we would reject the null in favor of the alternative (control versus treatment?)
+
+### 3. Resources to learn about the topic.
+Below are some of the resources I have begun to use to learn about creating simulations of survival curves and performing power analysis:
+
+a). https://cran.r-project.org/web/packages/coxed/vignettes/simulating_survival_data.html
+b). http://www.icssc.org/documents/advbiosgoa/tab%2026.00_survss.pdf
+
+### 4. What will be challenging about learning something new?
+Learning something new will be challenging because in this case, the concept of power analysis is something I just recently learned in Intro to Statistics. So learning to apply this concept in the context of survival analysis curves will be a challenge for me to learn. Learning how to simulate survival curves will also be challenging because I will have to learn how to use and interpret new functions in R.
+=======
 # Juste's "Something New"
 I will be analyzing the Shoenfeld residuals for the Cox PH model.
 
