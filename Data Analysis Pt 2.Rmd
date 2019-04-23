@@ -2,7 +2,11 @@
 title: "Data Analysis"
 author: "Juste Simanauskaite & Patricia Rivera"
 output: 
-  pdf_document: default
+  pdf_document: 
+    highlight: zenburn
+    toc: true
+    toc_depth: 6
+    
   html_document: default
 
 ---
@@ -34,7 +38,7 @@ lbls <- paste(lbls,"%",sep="")
 pie3D(slices,labels=lbls,explode=0.1,
    main="Gender Distribution ", cex.lab=0.1)
 ```
-The Pie Chart represents the gender distribution in the sample, with 84% male and 16% female.
+The Pie Chart represents the gender distribution in the sample, with 84% male and 16% female. This shows the potential for the data to not be able to correctly represent the difference of the data variance by gender, if there were to be one. Therefore, gender is something to look into in future data analysis.
 ```{r}
 wnh<-sum(aids$raceth==1)
 bnh<-sum(aids$raceth==2)
@@ -50,7 +54,7 @@ lbls <- paste(lbls,"%",sep="")
 pie(slices,lbls,col = rainbow(length(lbls)), cex=0.5 )
 
 ```
-
+The distribution od race/ethnicity shows that the greatest number of participants consists of white non-hispanic identifying indiciduals, with black non-hispanic following and hispanic as the 3rd largest represented group.
 ```{r}
 never<-sum(aids$ivdrug==1)
 cur<-sum(aids$ivdrug==2)
@@ -64,7 +68,7 @@ pie3D(slices,labels=lbls,explode=0.1,col=c("turquoise","magenta","salmon"),cex.s
    main="IV Drug Use History ")
 
 ```
-
+From this chart we see that most of the participants (84%) have never used IV drugs, whereas 16% of participants have some type of history of usage and none of the participants reported to be currently using the drugs.
 
 ```{r}
 hist(aids$time)
@@ -132,14 +136,11 @@ ggsurvplot(survfit(Surv(time,censor) ~ age, data=aids),
  
  
 # Juste's "Something New"
-I will be analyzing the Weibull PH regression (parametric survival model). 
+I will be analyzing the Shoenfeld residuals for the Cox PH model.
 
-### 1. What is goign on? What is the topic?
+### 1. What is goign on? What is the topic? 2. How it is relevant? How it relates to survival analysis/analysis at hand?
 
-Weibull model is a parametric model,which provides a flexible way for the inclusion of covariates of the survival times. It has been previously determined that when the shape of parameter is known, the Weibull model shows better results than the Cox proportional hazards model, but when the shape parameter is unknown, the Cox proportional hazards model and the Weibull model give comparable results.
-### 2. How it is relevant? How it relates to survival analysis/analysis at hand?
-
-Fully parametric models have many advantages in analyzing survival data, they can be more convenient for representing complex data structures and processes. Studies have indicated that under certain situations when the shape of the survival time is determined, the parametric models are more powerful and efficient than Cox’s regression model (ex. Kleinbaum D, Klein M. Survival analysis: a self-learning text. New York: Springer; 2005). Furthermore, if the only basic assumption of this model (proportional hazards) is not met, parametric models are suitable alternative models to be used instead of Cox’s regression analysis.
+Cox proportional hazards (PH) model is considered a great way to identify combined effects of several covariates on the relative risk (hazard). This model assumes that the hazards of the different strata formed by the levels of the covariates are proportional. This proportional hazards assumption is particularly important and can be tested via three different clases of tests. The first class is focused on the piecewise estimation of models for subsets of data defined by stratification of time. The second one considers the interactions between covariates and some function of time. Final, third one is based on examinations of regression residuals. The Schoenfeld Residuals are a part of the third class of proportional hazard assumption testing and I will be exploring it in order to be able to eradicate a method for testing for the PH assumption in the current and future data set analyses. This topic is particularly important in relation to survival analysis since it provides an idea of whether the model is appropriate for the data set at hand and whether some covariates should be considered as variants of time in order to supply the best model for prediction of proportional hazards.
 
 ### 3. Resources to learn about the topic.
 
@@ -159,4 +160,24 @@ library(flexsurv)
 flexsurvreg(Surv(time, censor) ~ age, data = aids,  dist = "weibull")
 
 ```
+#More about the Weibull Model
+The Weibull model is very similar to the Cox PH model we have explored in class. The Weibull Model usually used when the exponential distribution is not suffiecient to come up with a model. 
+The exponential desnity function is 
+$f(t)= \lambda exp(-\lambda(t))$, for $\lambda>0$ and $t>0$
+With a constant hazard function of $h(t)=\lambda$
+
+```{r}
+letters
+
+```
+
+SHoenfeld:
+```{r}
+veteran.ph <- coxph(Surv(time,status) ~ trt, data=veteran) 
+cox.veteran <- cox.zph(veteran.ph)
+cox.veteran
+ggcoxzph(cox.veteran)
+ggcoxdiagnostics(veteran.ph, type="schoenfeld")
+```
+
 
