@@ -219,15 +219,15 @@ In this case, the $Z(k)$ is the covariate vector of the particular unit that is 
 
 Furthermore, the weighted variance can be represented by the derived equation at the $k^{th}$ time as
 
-$V(\beta,t_k)=\sum_iY_i(t_k)r_i(t_k)Z_i(t_k)-\bar{z}(\hat{\beta},t_k)'Z_i(t_k)-\frac{\bar{z}(\hat{\beta},t_k)}{\sum_iY_i(t_k)r_i(t_k)}$
+\textcolor{turquoise1}{$$V(\beta,t_k)=\sum_iY_i(t_k)r_i(t_k)Z_i(t_k)-\bar{z}(\hat{\beta},t_k)'Z_i(t_k)-\frac{\bar{z}(\hat{\beta},t_k)}{\sum_iY_i(t_k)r_i(t_k)}$$}
 
 From this, we can scale the Schoenfeld residuals by $V(\beta,t_k)$ of X at $t_k$ via the equation:
 
-$s^*_k=V^{-1}(\hat{\beta},t_k)s_k$
+\textcolor{turquoise1}{$$$s^*_k=V^{-1}(\hat{\beta},t_k)s_k$$}
 
 The scaled Schoenfeld residuals can also be defined as follows:
 
-$s^*_k=m\sum^d_{k=1}V(\hat{\beta},t_k)s_k$
+\textcolor{turquoise1}{$$s^*_k=m\sum^d_{k=1}V(\hat{\beta},t_k)s_k$$}
 
 here, $m$ is the total number of deaths in the data set.
 
@@ -238,7 +238,7 @@ Following the calculations, the residuals are plotted against time in order to t
 
 By producing a least squares slope of regression and assuming a relationship between $s^*_{kj}$ and $t_{kj}$ or some function $g(t_k)$ allows to derive a test statistic for the proportional hazards assumption in regards to the $j^{th}$ covariate, which is given by:
 
-$T_j=\frac{[\sum^d_{k=1}(g(t_k)-\hat{g})s^8_{kj}]^2}{dI^{jj}\sum^d_{k=1}(g(t_k)-\hat{g})^2}$
+\textcolor{turquoise1}{$$T_j=\frac{[\sum^d_{k=1}(g(t_k)-\hat{g})s^8_{kj}]^2}{dI^{jj}\sum^d_{k=1}(g(t_k)-\hat{g})^2}$$}
 
 Here, the distribution is asymptotical as $X^2(1)$ stating the null hypothesis that the relationship between the covariate, in this case $j$ and the evnt time follows the assumption of PH.
 
