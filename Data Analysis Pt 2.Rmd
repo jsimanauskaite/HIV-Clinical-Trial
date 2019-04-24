@@ -109,6 +109,7 @@ library (survminer)
 library(ggplot2)
 library(broom)
 
+
 coxph(Surv(time_d,censor_d) ~ sex , data=aids)  %>% tidy()
 coxph(Surv(time,censor) ~ sex, data=aids) %>% tidy()
 
@@ -151,6 +152,20 @@ coxph(Surv(time,censor)~sex+tx+age+txgrp, data = aids) %>% tidy()
 
 ```
 
+```{r}
+
+library(ggfortify)
+
+aa_fit <-aareg(Surv(time, censor) ~ tx + txgrp + sex + ivdrug + hemophil + karnof, 
+                 data = aids)
+aa_fit
+autoplot(aa_fit)
+```
+The Aalen model assumes that the cumulative hazard H(t) for a subject can be expressed as a(t) + X B(t), where a(t) is a time-dependent intercept term, X is the vector of covariates for the subject (possibly time-dependent), and B(t) is a time-dependent matrix of coefficients.”
+
+The plots show how the effects of the covariates change over time. 
+
+
 
 
 #Patricia's "Something New"
@@ -170,6 +185,7 @@ b). http://www.icssc.org/documents/advbiosgoa/tab%2026.00_survss.pdf
 
 ### 4. What will be challenging about learning something new?
 Learning something new will be challenging because in this case, the concept of power analysis is something I just recently learned in Intro to Statistics. So learning to apply this concept in the context of survival analysis curves will be a challenge for me to learn. Learning how to simulate survival curves will also be challenging because I will have to learn how to use and interpret new functions in R.
+
 
 
 
