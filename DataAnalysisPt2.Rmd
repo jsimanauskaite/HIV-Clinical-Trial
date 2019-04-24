@@ -113,25 +113,24 @@ coxph(Surv(time,censor) ~ txgrp + sex + ivdrug + hemophil + karnof, data=aids) %
 full.ph <- coxph(Surv(time,censor) ~ txgrp + sex + ivdrug + hemophil + karnof, data=aids) 
 full.cox <-cox.zph(full.ph)
 full.cox
-ggcoxzph(full.cox)
+
 
 coxph(Surv(time,censor) ~ txgrp + sex + ivdrug + karnof, data=aids) %>% tidy()
 full.ph2 <- coxph(Surv(time,censor) ~ txgrp + sex + ivdrug + karnof, data=aids) 
 full.cox2 <-cox.zph(full.ph2)
 full.cox2
-ggcoxzph(full.cox2)
+
 
 coxph(Surv(time,censor) ~ txgrp + ivdrug + karnof, data=aids) %>% tidy()
 full.ph3 <- coxph(Surv(time,censor) ~ txgrp + ivdrug + karnof, data=aids) 
 full.cox3 <-cox.zph(full.ph3)
 full.cox3
-ggcoxzph(full.cox3)
+
 
 coxph(Surv(time,censor) ~ txgrp + karnof, data=aids) %>% tidy()
 full.ph4 <- coxph(Surv(time,censor) ~ txgrp + karnof, data=aids) 
 full.cox4 <-cox.zph(full.ph4)
 full.cox4
-ggcoxzph(full.cox4)
 
 anova(full.ph ,full.ph2)
 anova(full.ph2,full.ph3)
@@ -290,13 +289,7 @@ Here, the distribution is asymptotical as $X^2(1)$ stating the null hypothesis t
 
 
 Schoenfeld:
-```{r}
 
-veteran.ph <- coxph(Surv(time,status) ~ trt, data=veteran) 
-cox.veteran <- cox.zph(veteran.ph)
-cox.veteran
-ggcoxzph(cox.veteran)
-ggcoxdiagnostics(veteran.ph, type="schoenfeld")
 ```
 
 
