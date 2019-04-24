@@ -156,16 +156,14 @@ coxph(Surv(time,censor)~sex+tx+age+txgrp, data = aids) %>% tidy()
 
 library(ggfortify)
 
-aa_fit <-aareg(Surv(time, censor) ~ tx + txgrp + sex + ivdrug + hemophil + karnof, 
+aa_fit <-aareg(Surv(time, censor) ~ txgrp + sex + ivdrug + hemophil + karnof, 
                  data = aids)
-aa_fit
 autoplot(aa_fit)
 ```
-The Aalen model assumes that the cumulative hazard H(t) for a subject can be expressed as a(t) + X B(t), where a(t) is a time-dependent intercept term, X is the vector of covariates for the subject (possibly time-dependent), and B(t) is a time-dependent matrix of coefficients.”
+
+The Aalen model assumes that the cumulative hazard $H(t)$ for a subject can be expressed as $a(t)$ + X $B(t)$, where $a(t)$ is a time-dependent intercept term, X is the vector of covariates for the subject possibly time-dependent, and $B(t)$ is a time-dependent matrix of coefficients.
 
 The plots show how the effects of the covariates change over time. 
-
-
 
 
 #Patricia's "Something New"
