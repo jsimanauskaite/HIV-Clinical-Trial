@@ -102,7 +102,7 @@ aids <- aids %>%
   mutate(age = factor(age,
                        levels = c("under20", "20-30", "30-40","40-50", "50-60","60-70","over70")),  sex = ifelse(sex == 2, "male","female"))
 ```
-
+Since there are many vuales of the explanatory variable "age" in the original data, we've decided to mutate the variable into age categories from under 20 to over 70 in incriments of 10 years. 
 ```{r}
 library(survival)
 library (survminer)
@@ -323,7 +323,7 @@ Sources include:
 
 Taking a completely new model of analyzing survival data is particulalrly difficult since the mathematical derivations and notations are also very varied from what we have seen in class. Although, I do remember some of the ideas behind parametric functions, their applications to statistical models are much more challenging than I have expected. Therefore, it will require me a lot of time and extensive research to be able to understand and learn how to apply this model to our data and other instances of survival analysis.
 
-#Explanation of the Theory Behind Schoenfeld Residuals
+### Explanation of the Theory Behind Schoenfeld Residuals
 
 Let $z_{ij}(t)$ be the $j^{th}$ covariate of the $i^{th}$ unit, where $i=1,2,...,n$ and $j=1,2...,p$
 
@@ -378,16 +378,26 @@ $T_j=\frac{[\sum^d_{k=1}(g(t_k)-\hat{g})s^8_{kj}]^2}{dI^{jj}\sum^d_{k=1}(g(t_k)-
 
 Here, the distribution is asymptotical as $X^2(1)$ stating the null hypothesis that the relationship between the covariate, in this case $j$ and the evnt time follows the assumption of PH.
 
+***
 
+> Interpretation of Schoenfeld Residuals from plots in R and the p-values presented.
 
-Schoenfeld:
+The y-axis of the Schoenfeld residuals graph can be interpreted as the log of the hazard ratio for the explanatory variable-- the coefficient in Cox’s model if it were allow to vary over time. If the graph is flat, then the PH assumption is adequate. Furthermore, the Schoenfeld residuals are independent of time. A plot that shows a non-random pattern against time is evidence of violation of the PH assumption. The PH assumption is supported when there's a non-significan relationship between residuals and time.
+### HIV Data Cox PH model analysis using Schoenfeld Residuals
+
+Schoenfeld Residuals applied to our best Cox PH model for AIDS data where, we have an additive model of explanatory variables: baseline cd4 count, iv drug use history, and karnofsky performance scale score:
 ```{r}
+cph_r10 <- coxph(Surv(time,censor)~.-priorzdv -id -hemophil -raceth -time_d -strat2 -sex -txgrp -age -tx -censor_d, data = aids)
+cph_r10
+zph_r10 <- cox.zph(cph_r10)
+zph_r10
+ggcoxzph(zph_r10)
+ggcoxdiagnostics(cph_r10, type="schoenfeld")
 
-veteran.ph <- coxph(Surv(time,status) ~ trt, data=veteran) 
-cox.veteran <- cox.zph(veteran.ph)
-cox.veteran
-ggcoxzph(cox.veteran)
-ggcoxdiagnostics(veteran.ph, type="schoenfeld")
 ```
+
+Using the best determined Cox PH model for our data, we can look at the Schoenfeld residuals to determine if the PH assumption is met. Via the function "ggcoxzph()"", which produces, for each covariate, graphs of the scaled Schoenfeld residuals against the transformed time. Here, the solid line is a smoothing spline fit to the plot, with the dashed lines representing a +/- 2-standard-error. from these graphs, we don't see any patterns or significance of the residual fit regarding the graphs of the covariates with time. Therefore, the assumption of proportional hazrads seems to be supported for the covariates: baseline cd4 count, iv drug use history, and karnofsky performance scale score.
+
+Using the ggcoxdiagnostics() function we can provide another graphic representation of the residual distribution in regards to the covariates with time. Here, we also see that there's no particular pattern of the residuals around the line of fit, threfore again, we can state that the PH assumption has been met.
 
 
