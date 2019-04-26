@@ -1,11 +1,16 @@
 ---
 title: "Data Analysis"
 author: "Juste Simanauskaite & Patricia Rivera"
+geometry: margin=2cm
 output: 
   pdf_document: 
-    highlight: zenburn
+    highlight: tango
     toc: true
     toc_depth: 6
+    fig_width: 7
+    fig_height: 6
+    fig_crop: false
+
     
   html_document: default
 
@@ -50,7 +55,8 @@ api<-sum(aids$raceth==4)
 aian<-sum(aids$raceth==5)
 oth<-sum(aids$raceth==6)
 slices <- c(wnh,bnh,h,api,aian,oth) 
-lbls <- c("White Non-Hispanic", "Black Non-Hispanic", "Hispanic","Asian, Pacific Islander", "American Indian, Alaskan Native", "Other/unknown")
+lbls <- c("White Non-Hispanic", "Black Non-Hispanic", "Hispanic","Asian, Pacific Islander", 
+          "American Indian, Alaskan Native", "Other/unknown")
 pct <- round(slices/sum(slices)*100)
 lbls <- paste(lbls, pct) 
 lbls <- paste(lbls,"%",sep="") 
@@ -98,7 +104,8 @@ aids <- aids %>%
                                     ifelse(age <= 40, "30-40",
                                            ifelse(age <=50, "40-50",
                                                  ifelse(age <=60, "50-60",
-                                                        ifelse(age <=70, "60-70", "over70"))))))) %>%
+                                                        ifelse(age <=70, "60-70", 
+                                                               "over70"))))))) %>%
   mutate(age = factor(age,
                        levels = c("under20", "20-30", "30-40","40-50", "50-60","60-70","over70")),  sex = ifelse(sex == 2, "male","female"))
 ```
@@ -189,7 +196,8 @@ stat7 <- 2*(cph_r6$loglik[2]-cph_r7$loglik[2])
 
 
 #reduced model 8
-cph_r8 <- coxph(Surv(time,censor)~.-priorzdv -id -hemophil -raceth -time_d -strat2 -sex -txgrp -age, data = aids)
+cph_r8 <- coxph(Surv(time,censor)~.-priorzdv -id -hemophil -raceth -time_d -strat2
+                -sex -txgrp -age, data = aids)
 cph_r8$loglik
 cph_r8
 
@@ -199,7 +207,8 @@ stat8 <- 2*(cph_r7$loglik[2]-cph_r8$loglik[2])
 
 
 #reduced model 9
-cph_r9 <- coxph(Surv(time,censor)~.-priorzdv -id -hemophil -raceth -time_d -strat2 -sex -txgrp -age -tx, data = aids)
+cph_r9 <- coxph(Surv(time,censor)~.-priorzdv -id -hemophil -raceth -time_d -strat2 -sex 
+                -txgrp -age -tx, data = aids)
 cph_r9$loglik
 cph_r9
 
@@ -210,7 +219,8 @@ stat9 <- 2*(cph_r8$loglik[2]-cph_r9$loglik[2])
 1-pchisq(stat9,1)
 
 #reduced model 10
-cph_r10 <- coxph(Surv(time,censor)~.-priorzdv -id -hemophil -raceth -time_d -strat2 -sex -txgrp -age -tx -censor_d, data = aids)
+cph_r10 <- coxph(Surv(time,censor)~.-priorzdv -id -hemophil -raceth -time_d -strat2 -sex 
+                 -txgrp -age -tx -censor_d, data = aids)
 cph_r10$loglik
 cph_r10
 
@@ -235,15 +245,19 @@ ggsurvplot(survfit(Surv(time,censor) ~ 1, data=aids),
 
 
 ggsurvplot(survfit(Surv(time,censor) ~ sex, data=aids), 
-           censor=F, conf.int=T, fun="cumhaz") + ggtitle("Estimated Hazard rates based on sex")
+           censor=F, conf.int=T, fun="cumhaz") + 
+  ggtitle("Estimated Hazard rates based on sex")
 ggsurvplot(survfit(Surv(time,censor) ~ txgrp, data=aids), 
-           censor=F, conf.int=T, fun="cumhaz") + ggtitle("Estimated Hazard rates based on treatment group")
+           censor=F, conf.int=T, fun="cumhaz") + 
+  ggtitle("Estimated Hazard rates based on treatment group")
 
 ggsurvplot(survfit(Surv(time,censor) ~ karnof, data=aids), 
-           censor=F, conf.int=T, fun="cumhaz") + ggtitle("Estimated Hazard rates based on klarnfsky")
+           censor=F, conf.int=T, fun="cumhaz") + 
+  ggtitle("Estimated Hazard rates based on klarnfsky")
 
 ggsurvplot(survfit(Surv(time,censor) ~ age, data=aids), 
-           censor=F, conf.int=T, fun="cumhaz") + ggtitle("Estimated Hazard rates based on age")
+           censor=F, conf.int=T, fun="cumhaz") + 
+  ggtitle("Estimated Hazard rates based on age")
 
 
 ggsurvplot(survfit(Surv(time, censor)~hemophil, data = aids),
@@ -387,7 +401,8 @@ The y-axis of the Schoenfeld residuals graph can be interpreted as the log of th
 
 Schoenfeld Residuals applied to our best Cox PH model for AIDS data where, we have an additive model of explanatory variables: baseline cd4 count, iv drug use history, and karnofsky performance scale score:
 ```{r}
-cph_r10 <- coxph(Surv(time,censor)~.-priorzdv -id -hemophil -raceth -time_d -strat2 -sex -txgrp -age -tx -censor_d, data = aids)
+cph_r10 <- coxph(Surv(time,censor)~.-priorzdv -id -hemophil -raceth -time_d -strat2 
+                 -sex -txgrp -age -tx -censor_d, data = aids)
 cph_r10
 zph_r10 <- cox.zph(cph_r10)
 zph_r10
