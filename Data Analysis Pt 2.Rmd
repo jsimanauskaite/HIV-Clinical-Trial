@@ -4,7 +4,7 @@ author: "Juste Simanauskaite & Patricia Rivera"
 geometry: margin=2cm
 output: 
   pdf_document: 
-    highlight: pygment
+    highlight: tango
     toc: true
     toc_depth: 6
     fig_width: 7
