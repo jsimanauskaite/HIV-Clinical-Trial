@@ -4,7 +4,7 @@ author: "Juste Simanauskaite & Patricia Rivera"
 geometry: margin=2cm
 output: 
   pdf_document: 
-    highlight: tango
+    highlight: kate
     toc: true
     toc_depth: 6
     fig_width: 7
@@ -17,7 +17,8 @@ output:
 ---
 
 ```{r global_options, include=TRUE, message=FALSE, warning=FALSE}
-knitr::opts_chunk$set(message=FALSE, warning=FALSE, fig.height=3, fig.width=5, fig.align="center")
+knitr::opts_chunk$set(message=FALSE, warning=FALSE, fig.height=3, fig.width=5, 
+                      fig.align="center")
 library(tidyverse)
 library(broom)
 library(plyr)
