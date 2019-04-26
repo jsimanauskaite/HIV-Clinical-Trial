@@ -203,15 +203,19 @@ cph_r9 <- coxph(Surv(time,censor)~.-priorzdv -id -hemophil -raceth -time_d -stra
 cph_r9$loglik
 cph_r9
 
+
+###best model using backwards selection?
 #likelihood ratio test
 stat9 <- 2*(cph_r8$loglik[2]-cph_r9$loglik[2])
 1-pchisq(stat9,1)
 
 #reduced model 10
-cph_r10 <- coxph(Surv(time,censor)~.-priorzdv -id -hemophil -raceth -time_d -strat2 -sex -txgrp -age -tx -ivdrug, data = aids)
+cph_r10 <- coxph(Surv(time,censor)~.-priorzdv -id -hemophil -raceth -time_d -strat2 -sex -txgrp -age -tx -censor_d, data = aids)
 cph_r10$loglik
 cph_r10
 
+
+#NOTE: should we take out censor_d anyways since its related to censor or keep it?
 #likelihood ratio test
 stat10 <- 2*(cph_r9$loglik[2]-cph_r10$loglik[2])
 1-pchisq(stat10,1)
