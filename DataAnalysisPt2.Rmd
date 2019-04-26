@@ -231,7 +231,7 @@ Sources include:
 
 Taking a completely new model of analyzing survival data is particulalrly difficult since the mathematical derivations and notations are also very varied from what we have seen in class. Although, I do remember some of the ideas behind parametric functions, their applications to statistical models are much more challenging than I have expected. Therefore, it will require me a lot of time and extensive research to be able to understand and learn how to apply this model to our data and other instances of survival analysis.
 
-#Explanation of the Theory Behind Schoenfeld Residuals
+>Explanation of the Theory Behind Schoenfeld Residuals
 
 Let $z_{ij}(t)$ be the $j^{th}$ covariate of the $i^{th}$ unit, where $i=1,2,...,n$ and $j=1,2...,p$
 
