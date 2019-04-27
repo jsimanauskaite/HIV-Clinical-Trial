@@ -24,7 +24,7 @@ library(broom)
 library(plyr)
 library(survival)
 library(survminer)
-
+library(coxed)
 
 
 aids <- read.csv( "http://pages.pomona.edu/~jsh04747/courses/math150/AIDSdata.csv")
@@ -313,6 +313,45 @@ b). http://www.icssc.org/documents/advbiosgoa/tab%2026.00_survss.pdf
 ### 4. What will be challenging about learning something new?
 Learning something new will be challenging because in this case, the concept of power analysis is something I just recently learned in Intro to Statistics. So learning to apply this concept in the context of survival analysis curves will be a challenge for me to learn. Learning how to simulate survival curves will also be challenging because I will have to learn how to use and interpret new functions in R.
 
+### Power Analysis code and simulation
+```{r}
+simdata <- sim.survdata(N=1000, T=100, num.data.frames=1, beta = c(0.01,0.07,0.3))
+head(simdata$data,10)
+simdata$betas
+head(simdata$baseline,10)
+
+
+#ggsurvplot(survfit(Surv(y,failed) ~ X1 + X2 + X3, data = simdata$data))
+model <- coxph(Surv(y, failed) ~ X1 + X2 + X3, data = simdata$data)
+
+library(dplyr)
+library(broom)
+model %>% tidy()
+
+n.reps <- 100
+simoutput <- c()
+for(i in 1:n.reps){
+  simdata <- sim.survdata(N=1000, T=100, num.data.frames=1, xvars=4,beta = c(0,0.01,0.07,0.3))
+  model <- coxph(Surv(y, failed) ~ X1 + X2 + X3 + X4, data = simdata$data)
+  simoutput <- rbind(simoutput, cbind(rep = rep(i, 4), model %>% tidy()))
+  
+}
+
+simoutput
+
+#sum(which(simoutput$p.value < 0.05))
+sum(simoutput$p.value <0.05)
+
+#simoutput%>%filter(term=="X1")%>%summarize(sum(p.value<0.05))
+
+simoutput%>%dplyr::filter(term=="X1")%>%dplyr::summarize(sum(p.value<0.05))
+
+simoutput%>%dplyr::filter(term=="X2")%>%dplyr::summarize(sum(p.value<0.05))
+
+simoutput%>%dplyr::filter(term=="X3")%>%dplyr::summarize(sum(p.value<0.05))
+
+simoutput%>%dplyr::filter(term=="X4")%>%dplyr::summarize(sum(p.value<0.05))
+```
 
 
 
