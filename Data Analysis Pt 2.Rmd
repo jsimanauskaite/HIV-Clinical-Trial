@@ -337,7 +337,7 @@ for(i in 1:n.reps){
   
 }
 
-simoutput
+#simoutput
 
 #sum(which(simoutput$p.value < 0.05))
 sum(simoutput$p.value <0.05)
@@ -352,11 +352,6 @@ simoutput%>%dplyr::filter(term=="X3")%>%dplyr::summarize(sum(p.value<0.05))
 
 simoutput%>%dplyr::filter(term=="X4")%>%dplyr::summarize(sum(p.value<0.05))
 ```
-
-
-
-
-
 
 
 
