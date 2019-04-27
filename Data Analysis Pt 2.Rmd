@@ -108,7 +108,8 @@ aids <- aids %>%
                                                         ifelse(age <=70, "60-70", 
                                                                "over70"))))))) %>%
   mutate(age = factor(age,
-                       levels = c("under20", "20-30", "30-40","40-50", "50-60","60-70","over70")),  sex = ifelse(sex == 2, "male","female"))
+                       levels = c("under20", "20-30", "30-40","40-50", "50-60","60-70","over70")),  
+         sex = ifelse(sex == 2, "male","female"))
 ```
 Since there are many vuales of the explanatory variable "age" in the original data, we've decided to mutate the variable into age categories from under 20 to over 70 in incriments of 10 years. 
 ```{r}
@@ -186,7 +187,8 @@ stat6 <- 2*(cph_r5$loglik[2]-cph_r6$loglik[2])
 
 
 #reduced model 7
-cph_r7 <- coxph(Surv(time,censor)~.-priorzdv -id -hemophil -raceth -time_d -strat2 -sex, data = aids)
+cph_r7 <- coxph(Surv(time,censor)~.-priorzdv -id -hemophil -raceth -time_d -strat2 -sex, 
+                data = aids)
 cph_r7$loglik
 cph_r7
 
