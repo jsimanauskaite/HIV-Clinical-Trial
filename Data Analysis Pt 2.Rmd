@@ -15,7 +15,8 @@ output:
   html_document: default
 
 ---
-
+# INTRODUCTION
+  HIV (Human Immunodeficiency Virus) is a disease known as an immune system disorder, which causes severe destruction of white blood cells that are responsible for fighting infection. The presence of this disorder is a lead-in for a human to be more prone to infections and cancer diseases. AIDS is the final stage of HIV, which is not always developed in HIV patients. Zidovudine (AZT) is known as antiretroviral medication for prevention of HIV/AIDS, whereas lamuvidine (3TC) is an inhibitor medication that works in decreasing HIV and hepatitis B. Previously, it has been founded that three-drug combinations, in particular, with a previous exposure to AZT, have shown the most significant resulted in reducing HIV-1 RNA concentrations. Therefore, this study used indinavir sulfate (a synthetic antiviral agent that inhibits HIV protease activity) in combination with AZT and 3TC as well as variation of placebo treatments to determine the potency of triple drug therapy in the cases of  advanced HIV-1 patients. The study hypothesized that a three-drug combination, including a HIV-protease inhibitor and two nucleoside analogues (AZT and 3TC) would alter the progression of the HIV-1 disease. The study was successful in reaching significant data of the clinical superiority of a three-drug approach with inidavor over a treatment containing only a two-drug combination.
 ```{r global_options, include=TRUE, message=FALSE, warning=FALSE}
 knitr::opts_chunk$set(message=FALSE, warning=FALSE, fig.height=3, fig.width=5, 
                       fig.align="center")
@@ -64,7 +65,7 @@ lbls <- paste(lbls,"%",sep="")
 pie(slices,lbls,col = rainbow(length(lbls)), cex=0.5 )
 
 ```
-The distribution od race/ethnicity shows that the greatest number of participants consists of white non-hispanic identifying indiciduals, with black non-hispanic following and hispanic as the 3rd largest represented group.
+The distribution of race/ethnicity shows that the greatest number of participants consists of white non-Hispanic identifying individuals, with black non-Hispanic following and Hispanic as the 3rd largest represented group.
 ```{r}
 never<-sum(aids$ivdrug==1)
 cur<-sum(aids$ivdrug==2)
@@ -111,7 +112,7 @@ aids <- aids %>%
                        levels = c("under20", "20-30", "30-40","40-50", "50-60","60-70","over70")),  
          sex = ifelse(sex == 2, "male","female"))
 ```
-Since there are many vuales of the explanatory variable "age" in the original data, we've decided to mutate the variable into age categories from under 20 to over 70 in incriments of 10 years. 
+Since there are many values of the explanatory variable "age" in the original data, we've decided to mutate the variable into age categories from under 20 to over 70 in increments of 10 years. 
 ```{r}
 library(survival)
 library (survminer)
@@ -360,11 +361,11 @@ I will be analyzing the Shoenfeld residuals for the Cox PH model.
 
 ### 1. What is goign on? What is the topic? 2. How it is relevant? How it relates to survival analysis/analysis at hand?
 
-Cox proportional hazards (PH) model is considered a great way to identify combined effects of several covariates on the relative risk (hazard). This model assumes that the hazards of the different strata formed by the levels of the covariates are proportional. This proportional hazards assumption is particularly important and can be tested via three different clases of tests. The first class is focused on the piecewise estimation of models for subsets of data defined by stratification of time. The second one considers the interactions between covariates and some function of time. Final, third one is based on examinations of regression residuals. The Schoenfeld Residuals are a part of the third class of proportional hazard assumption testing and I will be exploring it in order to be able to eradicate a method for testing for the PH assumption in the current and future data set analyses. This topic is particularly important in relation to survival analysis since it provides an idea of whether the model is appropriate for the data set at hand and whether some covariates should be considered as variants of time in order to supply the best model for prediction of proportional hazards.
+Cox proportional hazards (PH) model is considered a great way to identify combined effects of several covariates on the relative risk (hazard). This model assumes that the hazards of the different strata formed by the levels of the covariates are proportional. This proportional hazards assumption is particularly important and can be tested via three different classes of tests. The first class is focused on the piece-wise estimation of models for subsets of data defined by stratification of time. The second one considers the interactions between covariates and some function of time. Final, third one is based on examinations of regression residuals. The Schoenfeld Residuals are a part of the third class of proportional hazard assumption testing and I will be exploring it in order to be able to eradicate a method for testing for the PH assumption in the current and future data set analyses. This topic is particularly important in relation to survival analysis since it provides an idea of whether the model is appropriate for the data set at hand and whether some covariates should be considered as variants of time in order to supply the best model for prediction of proportional hazards.
 
 ### 3. Resources to learn about the topic.
 
-I have been researching articles and scientific journals that provide insights into tthe Schoenfeld residuals and their use in the Cox PH model. 
+I have been researching articles and scientific journals that provide insights into the Schoenfeld residuals and their use in the Cox PH model. 
 Sources include: 
 
 1. https://onlinelibrary.wiley.com/doi/full/10.1111/ajps.12176
@@ -372,7 +373,7 @@ Sources include:
 
 ### 4. What will be challenging about learning something new?
 
-Taking a completely new model of analyzing survival data is particulalrly difficult since the mathematical derivations and notations are also very varied from what we have seen in class. Although, I do remember some of the ideas behind parametric functions, their applications to statistical models are much more challenging than I have expected. Therefore, it will require me a lot of time and extensive research to be able to understand and learn how to apply this model to our data and other instances of survival analysis.
+Taking a completely new model of analyzing survival data is particularly difficult since the mathematical derivations and notations are also very varied from what we have seen in class. Although, I do remember some of the ideas behind parametric functions, their applications to statistical models are much more challenging than I have expected. Therefore, it will require me a lot of time and extensive research to be able to understand and learn how to apply this model to our data and other instances of survival analysis.
 
 ### Explanation of the Theory Behind Schoenfeld Residuals
 
@@ -386,14 +387,14 @@ This notation indicates that $z_{ij}$ is allowed to vary as a function of the ti
   + $h_0$ -> baseline hazard
   + $z_i(t)$ -> 1 x $p$ vector of covariates for unit $i$ each of which can be time fixed or time-varying.
 
-2) However, another possibility has been presented by Therneau and Granbsh in 2000, where they proposed an idea that there ciuyld be an alternative to the current Cox model, where the coefficient of the estimate could also be varying as a function of time.
+2) However, another possibility has been presented by Therneau and Granbsh in 2000, where they proposed an idea that there could be an alternative to the current Cox model, where the coefficient of the estimate could also be varying as a function of time.
 
 > The new hazard function would look like this: $h_i(t)=h_0(t)e^{z_i(t)\beta(t)}$
 
 Therefore, in order to examine thee two models in a case when $\beta=\beta(t)$ requires a residual analysis that could indicate whether a model should consider a covariate as a variable with time.
 
 ***
-Due to the fact that that some observations might be censored and in particular, regarding the Cox PH model, the baseline hazard is not estimated, in oprder to analyse the residuals a particular score process. The risk score for unit $i$ at time $t$ is thought to be $r_i(t)=e^{z_i(t)\beta}$, where $Y_i(t)$ is the indicator function and $Y_i(t)=1$ indicates a point in which $i$ is under risk and thus observation and it is equal to 0 in other occasions.
+Due to the fact that that some observations might be censored and in particular, regarding the Cox PH model, the baseline hazard is not estimated, in order to analyse the residuals a particular score process. The risk score for unit $i$ at time $t$ is thought to be $r_i(t)=e^{z_i(t)\beta}$, where $Y_i(t)$ is the indicator function and $Y_i(t)=1$ indicates a point in which $i$ is under risk and thus observation and it is equal to 0 in other occasions.
 
 ***
 
@@ -402,7 +403,7 @@ The Schoenfeld residuals are given by the equations:
 1. $s_k=Z_{(k)}-\frac{\sum_iY_i(t_k)r_i(t_k)Z_i(t_k)}{\sum_iY_i(t_k)r_i(t_k)}$
 2. $s_k=Z_{(k)}-\bar{z}(\hat{\beta},t_k)$
 
-In this case, the $Z(k)$ is the covariate vector of the particular unit that is experiencing the evnt at time $k$; $\hat{\beta}$ is the estimate of $\beta$ and $\bar{z}(\hat{\beta},t_k)$ is the wighted mean of covariate values.
+In this case, the $Z(k)$ is the covariate vector of the particular unit that is experiencing the event at time $k$; $\hat{\beta}$ is the estimate of $\beta$ and $\bar{z}(\hat{\beta},t_k)$ is the weighted mean of covariate values.
 
 Furthermore, the weighted variance can be represented by the derived equation at the $k^{th}$ time as
 
@@ -418,7 +419,7 @@ $s^*_k=m\sum^d_{k=1}V(\hat{\beta},t_k)s_k$
 
 here, $m$ is the total number of deaths in the data set.
 
-Following the calculations, the residuals are plotted against time in order to test the prportional hazards assumption. If the assumption is correct, the residuals should be fiting around the line centered at zero (y=0). The further away this predicted line is form the horizontal of (y=0) the more likely one is to call the PH assumption to question and determine whether it is met through the model.
+Following the calculations, the residuals are plotted against time in order to test the proportional hazards assumption. If the assumption is correct, the residuals should be fitting around the line centered at zero (y=0). The further away this predicted line is form the horizontal of (y=0) the more likely one is to call the PH assumption to question and determine whether it is met through the model.
 
 ***
 > To go a little deeper into the analysis of the resiaul calculation, one can look at the calculations of the test statistic for this residual mdoel.
@@ -427,16 +428,16 @@ By producing a least squares slope of regression and assuming a relationship bet
 
 $T_j=\frac{[\sum^d_{k=1}(g(t_k)-\hat{g})s^8_{kj}]^2}{dI^{jj}\sum^d_{k=1}(g(t_k)-\hat{g})^2}$
 
-Here, the distribution is asymptotical as $X^2(1)$ stating the null hypothesis that the relationship between the covariate, in this case $j$ and the evnt time follows the assumption of PH.
+Here, the distribution is asymptotically as $X^2(1)$ stating the null hypothesis that the relationship between the covariate, in this case $j$ and the event time follows the assumption of PH.
 
 ***
 
 > Interpretation of Schoenfeld Residuals from plots in R and the p-values presented.
 
-The y-axis of the Schoenfeld residuals graph can be interpreted as the log of the hazard ratio for the explanatory variable-- the coefficient in Cox’s model if it were allow to vary over time. If the graph is flat, then the PH assumption is adequate. Furthermore, the Schoenfeld residuals are independent of time. A plot that shows a non-random pattern against time is evidence of violation of the PH assumption. The PH assumption is supported when there's a non-significan relationship between residuals and time.
+The y-axis of the Schoenfeld residuals graph can be interpreted as the log of the hazard ratio for the explanatory variable-- the coefficient in Cox’s model if it were allow to vary over time. If the graph is flat, then the PH assumption is adequate. Furthermore, the Schoenfeld residuals are independent of time. A plot that shows a non-random pattern against time is evidence of violation of the PH assumption. The PH assumption is supported when there's a non-significant relationship between residuals and time.
 ### HIV Data Cox PH model analysis using Schoenfeld Residuals
 
-Schoenfeld Residuals applied to our best Cox PH model for AIDS data where, we have an additive model of explanatory variables: baseline cd4 count, iv drug use history, and karnofsky performance scale score:
+Schoenfeld Residuals applied to our best Cox PH model for AIDS data where, we have an additive model of explanatory variables: baseline CD4 count, iv drug use history, and karnofsky performance scale score:
 ```{r}
 cph_r10 <- coxph(Surv(time,censor)~.-priorzdv -id -hemophil -raceth -time_d -strat2 
                  -sex -txgrp -age -tx -censor_d, data = aids)
@@ -448,8 +449,8 @@ ggcoxdiagnostics(cph_r10, type="schoenfeld")
 
 ```
 
-Using the best determined Cox PH model for our data, we can look at the Schoenfeld residuals to determine if the PH assumption is met. Via the function "ggcoxzph()"", which produces, for each covariate, graphs of the scaled Schoenfeld residuals against the transformed time. Here, the solid line is a smoothing spline fit to the plot, with the dashed lines representing a +/- 2-standard-error. from these graphs, we don't see any patterns or significance of the residual fit regarding the graphs of the covariates with time. Therefore, the assumption of proportional hazrads seems to be supported for the covariates: baseline cd4 count, iv drug use history, and karnofsky performance scale score.
+Using the best determined Cox PH model for our data, we can look at the Schoenfeld residuals to determine if the PH assumption is met. Via the function "ggcoxzph()"", which produces, for each covariate, graphs of the scaled Schoenfeld residuals against the transformed time. Here, the solid line is a smoothing spline fit to the plot, with the dashed lines representing a +/- 2-standard-error. from these graphs, we don't see any patterns or significance of the residual fit regarding the graphs of the covariates with time. Therefore, the assumption of proportional hazards seems to be supported for the covariates: baseline CD4 count, iv drug use history, and karnofsky performance scale score.
 
-Using the ggcoxdiagnostics() function we can provide another graphic representation of the residual distribution in regards to the covariates with time. Here, we also see that there's no particular pattern of the residuals around the line of fit, threfore again, we can state that the PH assumption has been met.
+Using the ggcoxdiagnostics() function we can provide another graphic representation of the residual distribution in regards to the covariates with time. Here, we also see that there's no particular pattern of the residuals around the line of fit, therefore again, we can state that the PH assumption has been met.
 
 
