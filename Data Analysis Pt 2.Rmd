@@ -3,15 +3,15 @@ title: "Survival Analysis Project: HIV Clinical Trial"
 author: "Juste Simanauskaite & Patricia Rivera"
 geometry: margin=2cm
 output: 
-  html_document: default
   pdf_document: 
+    
     highlight: tango
     toc: true
     toc_depth: 6
     fig_width: 7
     fig_height: 6
     fig_crop: false
-    
+  html_document: default
 ---
 # Introduction
   HIV (Human Immunodeficiency Virus) is a disease known as an immune system disorder, which causes severe destruction of white blood cells that are responsible for fighting infection. The presence of this disorder is a lead-in for a human to be more prone to infections and cancer diseases. AIDS is the final stage of HIV, which is not always developed in HIV patients. Zidovudine (AZT) is known as antiretroviral medication for prevention of HIV/AIDS, whereas lamuvidine (3TC) is an inhibitor medication that works in decreasing HIV and hepatitis B. Previously, it has been founded that three-drug combinations, in particular, with a previous exposure to AZT, have shown the most significant resulted in reducing HIV-1 RNA concentrations. Therefore, this study used indinavir sulfate (a synthetic antiviral agent that inhibits HIV protease activity) in combination with AZT and 3TC as well as variation of placebo treatments to determine the potency of triple drug therapy in the cases of  advanced HIV-1 patients. The study hypothesized that a three-drug combination, including a HIV-protease inhibitor and two nucleoside analogues (AZT and 3TC) would alter the progression of the HIV-1 disease. The study was successful in reaching significant data of the clinical superiority of a three-drug approach with inidavor over a treatment containing only a two-drug combination.
@@ -48,7 +48,7 @@ dim(aids)
 summary(aids)
 
 ```
-
+# Data-Set Analysis
 The data set contains a sample size equal to 851 participants and 16 different variables. Out of these participants 782 were considered as uncensored data point, which indicates that these patients survived through the course of the study without diagnosis of AIDS and/or death. 69 were found to be censored meaning that either there was an occurence of death or AIDS diagnosis, out of which it is known that 20 patients died throughout the course of the study.
 
 ```{r}
@@ -131,25 +131,61 @@ print(ethplot + ggtitle("IV Drug Use History")+
 ```
 From this chart we see that most of the participants (84%) have never used IV drugs, whereas 16% of participants have some type of history of usage and none of the participants reported to be currently using the drugs.
 
+# Results
 
+## Survival Analysis
+
+### Kaplan-Meier Curves
+
+The following graph is a representation of a Kaplan Meier Curve for all participants in the study, we can see that only a few participants dies or were diagnosed with AIDS during the study as the slope of the curve is not experiencing a high decrease.
 ```{r}
 
 fit <- survfit(Surv(time,censor)~1, data = aids)
 ggsurvplot(fit,data = aids,conf.int = FALSE) + ggtitle("Overall")
 
+
+```
+
+The following graph is a representation of the Kaplan-Meier survival probability based on the treatment indicator. In this case *tx=0* was the control group and *tx=1* the treatment group that was gived IDV. Already, we can see a tred in the graph that the control group shows a lower survival probability with time. According to the log-rank test, we see that the p-value for the test statistic is equal to 0.002 (<0.05), thus we can reject the null hypothesis that the two population survival functions are the same, and the alternative is accepted, which says that the survival curves are different. The Wilcoxon test also provides us with a small p-value of 0.002 , which again rejects the null and goes in agreement with our primary conclusion.
+```{r}
 fit1 <- survfit(Surv(time,censor)~tx, data = aids)
 ggsurvplot(fit1,data = aids,conf.int = FALSE) + ggtitle("Treatment Indicator")
 
-fit2 <- survfit(Surv(time,censor)~raceth, data = aids)
-ggsurvplot(fit2,data = aids,conf.int = FALSE) + ggtitle("Race/Ethnicity")
+'Log-Rank'
+survdiff(Surv(time,censor)~tx, data = aids, rho=0)
+'Wilcoxon'
+survdiff(Surv(time,censor)~tx, data = aids, rho=1)
+```
 
-fit3 <- survfit(Surv(time,censor)~ivdrug, data = aids)
-ggsurvplot(fit3,data = aids,conf.int = FALSE) + ggtitle("IV Drug Use History")
+```{r}
+fit2 <- survfit(Surv(time,censor)~age, data = aids)
+ggsurvplot(fit2,data = aids,conf.int = FALSE) + ggtitle("Age")
 
+'Log-Rank'
+survdiff(Surv(time,censor)~age, data = aids, rho=0)
+'Wilcoxon'
+survdiff(Surv(time,censor)~age, data = aids, rho=1)
+```
+The following graph is a representation of the Kaplan-Meier survival probability based on the Baseline CD4. Due to the close proximity of the curves it's harder to see the significance of the differences. However, according to the log-rank test, we see that the p-value for the test statistic is equal to 5e-07  (<0.05), thus we can reject the null hypothesis, The Wilcoxon test  again provides us with a small p-value of 5e-07, which again rejects the null and goes in agreement with our primary conclusion that the curves are significantly different.
+```{r}
+fit3 <- survfit(Surv(time,censor)~cd4, data = aids)
+ggsurvplot(fit3,data = aids,conf.int = FALSE) + ggtitle("Baseline CD4 Count")
 
+'Log-Rank'
+survdiff(Surv(time,censor)~cd4, data = aids, rho=0)
+'Wilcoxon'
+survdiff(Surv(time,censor)~cd4, data = aids, rho=1)
+```
+The final explanatory variable we're investigating as a part of our model is teh Karnofsky Performance Scale. The Kaplan-Meier curves for this variable present a higher amplitude of distributions across the survival scale. The p-values of both log-rank and the Wilcoxon Test again present with the same significant p-value of  5e-10  (<0.05), thus we can reject the null hypothesis of no difference between the curves and consider this a significant variable in the construction of our model.
+```{r}
 aids_fit_time_k <- survfit(Surv(time, censor) ~karnof  , data=aids)
 ggsurvplot(aids_fit_time_k, data=aids,  conf.int = TRUE) +
   ggtitle("Karnofsky Performance Score")
+
+'Log-Rank'
+survdiff(Surv(time,censor)~karnof, data = aids, rho=0)
+'Wilcoxon'
+survdiff(Surv(time,censor)~karnof, data = aids, rho=1)
 
 ```
 
@@ -264,52 +300,6 @@ s7 <- 2*(cp_red6$loglik[2]-cp_red7$loglik[2])
 
 
 
-```{r}
-coxph(Surv(time_d,censor_d) ~ sex , data=aids)  %>% tidy()
-coxph(Surv(time,censor) ~ sex, data=aids) %>% tidy()
-
-coxph(Surv(time,censor) ~ age+ txgrp+ karnof, data=aids) %>% tidy()
-cox.zph(coxph(Surv(time,censor) ~ age + txgrp+karnof, data=aids))
-coxph(Surv(time,censor) ~ age *txgrp*karnof, data=aids) %>% tidy()
-cox.zph(coxph(Surv(time,censor) ~ age *txgrp*karnof, data=aids))
-
-ggsurvplot(survfit(Surv(time,censor) ~ 1, data=aids), 
-           censor=F, conf.int=T, fun="cumhaz") + ggtitle("Estimated Hazard rates")
-
-
-ggsurvplot(survfit(Surv(time,censor) ~ sex, data=aids), 
-           censor=F, conf.int=T, fun="cumhaz") + 
-  ggtitle("Estimated Hazard rates based on sex")
-ggsurvplot(survfit(Surv(time,censor) ~ txgrp, data=aids), 
-           censor=F, conf.int=T, fun="cumhaz") + 
-  ggtitle("Estimated Hazard rates based on treatment group")
-
-ggsurvplot(survfit(Surv(time,censor) ~ karnof, data=aids), 
-           censor=F, conf.int=T, fun="cumhaz") + 
-  ggtitle("Estimated Hazard rates based on klarnfsky")
-
-ggsurvplot(survfit(Surv(time,censor) ~ age, data=aids), 
-           censor=F, conf.int=T, fun="cumhaz") + 
-  ggtitle("Estimated Hazard rates based on age")
-
-
-ggsurvplot(survfit(Surv(time, censor)~hemophil, data = aids),
-           censor=F, conf.int = T, fun = "cumhaz")
-
-
-ggsurvplot(survfit(Surv(time, censor)~ivdrug, data = aids),
-           censor=F, conf.int = T, fun = "cumhaz")
-
-
-coxph(Surv(time,censor) ~ ivdrug, data=aids) %>% tidy()
-
-coxph(Surv(time,censor) ~ ivdrug*karnof, data=aids) %>% tidy()
-
-
-
-coxph(Surv(time,censor)~sex+tx+age+txgrp, data = aids) %>% tidy()
-
-```
 
 To better understand how nmuch the model fit changes with each different explanatory variable, we can use the graphical representation of the Aalen additive regression model. The Aalen model allows for time-varying covariate effects, while the Cox model allows only a common time-dependence through the baseline. In the Aalen model, we have the weighted comparisons of the crude estimate of the hazard rate of each group as compared to a baseline group, which here is defined as the estimate. As we can see, the selected explanatory variables in our model all have an inverse coefficient correlation with the baseline interceipt. The slope of an estimated cumulative regression function is positive when covariate increases and this fact correspond to an increasing hazard rate. On the other hand, if the slope is negative while the covariate increases, then this fact points to a decreasing hazard rate.
 ```{r}
