@@ -15,7 +15,25 @@ output:
   html_document: default
 
 ---
+# Introduction
+  HIV (Human Immunodeficiency Virus) is a disease known as an immune system disorder, which causes severe destruction of white blood cells that are responsible for fighting infection. The presence of this disorder is a lead-in for a human to be more prone to infections and cancer diseases. AIDS is the final stage of HIV, which is not always developed in HIV patients. Zidovudine (AZT) is known as antiretroviral medication for prevention of HIV/AIDS, whereas lamuvidine (3TC) is an inhibitor medication that works in decreasing HIV and hepatitis B. Previously, it has been founded that three-drug combinations, in particular, with a previous exposure to AZT, have shown the most significant resulted in reducing HIV-1 RNA concentrations. Therefore, this study used indinavir sulfate (a synthetic antiviral agent that inhibits HIV protease activity) in combination with AZT and 3TC as well as variation of placebo treatments to determine the potency of triple drug therapy in the cases of  advanced HIV-1 patients. The study hypothesized that a three-drug combination, including a HIV-protease inhibitor and two nucleoside analogues (AZT and 3TC) would alter the progression of the HIV-1 disease. The study was successful in reaching significant data of the clinical superiority of a three-drug approach with inidavor over a treatment containing only a two-drug combination.
 
+The current analysis of the data from a study conducted by Hammer et al. in 1997 considers the response variable to be *time*, which here describes the amount of time in days for the time of death, AIDS diagnosis, or the termination of the study. Another important variable used for the analysis is *censor*, which indicates the paarticipants of the study that survived till the termination of the study without dying or being diagnosed AIDS. The study explored the influence of the explanatory varibale *tx*. referring to the treatment group that was differentiated into: a control (placebo group) and a treatment group that included IDV (indinavir)
+# Methods
+
+The study was a randomized, double-blind, and a placebo-controlled trial that compared a three-drug treatment of indinavir (Crixivan), zidovudine (AZT) and lamivudine (3TC) with a two-drug treatment. Patients were selected based on the factor that they had no more than 200 CD4 cells per cubic millimetear at least 3 months prioir to AZT therapy. The patients had to be more than 16 years old, with a diagnostic documentation of HIV-1 infection, having no more than 1 week of prior lamuvidine treatment, and a Karnofsky score of at least 70.
+
+The approved patients received 200mg of open-label zidovudine three times daily and 150mg of lamuvidine two times daily and were randomly assigned to a placebo or a treatment of 800mg of indinavir every eight hours.
+
+Some modifications were made to the protocol. In October of 1996 prioir exposure to AZT was reduced to at least 3 months and permitted patients with no tolerance for this drug to enter the study with stavudine as a substitute.
+
+Patients diagnosed with AIDS-defining events were offored an open-label assignment of the indinavir treatment with nor reveal of their initial treatment assignments. All of these cases had to be reviewed via a blind procedure by the study chair.
+
+Follow ups were made at weeks 4,8, and 16 and every eight weeks afterwards. CD4 cell counts and Plasma HIV-1 RNA concentrations were measured twice at baseline and at weeks 4,8,24, and 40. 
+
+The statistical analysis methods used to interpret results were Kaplan-Meier estimates, log-rank tests, and proportional hazards models. The p-values, estimates of treatment differences and 95% confidence intervals were not adjusted for repeated analysis.
+
+The data and results have been reviewed again in 2019 and have been analyzed via statistic methhods such as Cox Proportional Hazards test, Kaplan-Meier estimates, Aalen model, Power analysis, and Schoenfeld residuals.
 ```{r global_options, include=TRUE, message=FALSE, warning=FALSE}
 knitr::opts_chunk$set(message=FALSE, warning=FALSE, fig.height=3, fig.width=5, 
                       fig.align="center")
@@ -33,19 +51,28 @@ summary(aids)
 
 ```
 
-The data set contains a sample size equal to 851 participants and 16 different variables.
+The data set contains a sample size equal to 851 participants and 16 different variables. Out of these participants 782 were considered as uncensored data point, which indicates that these patients survived through the course of the study without diagnosis of AIDS and/or death. 69 were found to be censored meaning that either there was an occurence of death or AIDS diagnosis, out of which it is known that 20 patients died throughout the course of the study.
 
 ```{r}
 library(plotrix)
-male<-sum(aids$sex==1)
-female<-sum(aids$sex==2)
+male<-sum(aids$sex=="male")
+female<-sum(aids$sex=="female")
 slices <- c(male, female) 
-lbls <- c("Male", "Female")
+lbls <- c("Male","Female")
 pct <- round(slices/sum(slices)*100)
 lbls <- paste(lbls, pct) 
 lbls <- paste(lbls,"%",sep="") 
-pie3D(slices,labels=lbls,explode=0.1,
-   main="Gender Distribution ", cex.lab=0.1)
+df = data.frame(slices = pct,labels =  lbls)
+sexplot<- ggplot(df,aes(x = factor(1),y=slices,  fill = labels)) +
+         geom_bar(stat="identity", width = 1)+
+        coord_polar(theta = "y")+
+        theme(axis.line = element_blank(),
+          axis.text = element_blank(),
+          axis.ticks = element_blank(),
+          axis.title = element_blank())
+print(sexplot + ggtitle("Gender Distribution")+ scale_fill_manual(values=c("#55DDE0", "#33658A","#2F4858"))+ labs(x = NULL, y = NULL, fill = NULL))
+
+
 ```
 The Pie Chart represents the gender distribution in the sample, with 84% male and 16% female. This shows the potential for the data to not be able to correctly represent the difference of the data variance by gender, if there were to be one. Therefore, gender is something to look into in future data analysis.
 ```{r}
@@ -61,10 +88,21 @@ lbls <- c("White Non-Hispanic", "Black Non-Hispanic", "Hispanic","Asian, Pacific
 pct <- round(slices/sum(slices)*100)
 lbls <- paste(lbls, pct) 
 lbls <- paste(lbls,"%",sep="") 
-pie(slices,lbls,col = rainbow(length(lbls)), cex=0.5 )
+df = data.frame(slices = slices,labels =  lbls)
+
+ethplot<- ggplot(df,aes(x = factor(1),y=slices,  fill = labels)) +
+         geom_bar(stat="identity", width = 1)+
+        coord_polar(theta = "y")+
+        theme(axis.line = element_blank(),
+          axis.text = element_blank(),
+          axis.ticks = element_blank(),
+          axis.title = element_blank())
+print(ethplot + ggtitle("Race/Ethnicity Distribution among participants")+ scale_fill_manual(values=c("#55DDE0", "#33658A", "#2F4858", "#F6AE2D", "#F26419", "#999999"))+ labs(x = NULL, y = NULL, fill = NULL))
+
+
 
 ```
-The distribution od race/ethnicity shows that the greatest number of participants consists of white non-hispanic identifying indiciduals, with black non-hispanic following and hispanic as the 3rd largest represented group.
+The distribution of race/ethnicity shows that the greatest number of participants consists of white non-Hispanic identifying individuals, with black non-Hispanic following and Hispanic as the 3rd largest represented group.
 ```{r}
 never<-sum(aids$ivdrug==1)
 cur<-sum(aids$ivdrug==2)
@@ -74,29 +112,40 @@ lbls <- c("Never", "Currently", "Previously")
 pct <- round(slices/sum(slices)*100)
 lbls <- paste(lbls, pct) 
 lbls <- paste(lbls,"%",sep="") 
-pie3D(slices,labels=lbls,explode=0.1,col=c("turquoise","magenta","salmon"),cex.sub=0.5,
-   main="IV Drug Use History ")
+df = data.frame(slices = slices,labels =  lbls)
+ivplot<- ggplot(df,aes(x = factor(1),y=slices,  fill = labels)) +
+         geom_bar(stat="identity", width = 1)+
+        coord_polar(theta = "y")+
+        theme(axis.line = element_blank(),
+          axis.text = element_blank(),
+          axis.ticks = element_blank(),
+          axis.title = element_blank())
+print(ethplot + ggtitle("IV Drug Use History")+ scale_fill_manual(values=c("#56ADE3", "#12358A", "#F41288", "#F7BE6D", "#F26569", "#A65674"))+ labs(x = NULL, y = NULL, fill = NULL))
 
 ```
 From this chart we see that most of the participants (84%) have never used IV drugs, whereas 16% of participants have some type of history of usage and none of the participants reported to be currently using the drugs.
 
-```{r}
-hist(aids$time)
 
-###Data Plots
+```{r}
+
 
 fit <- survfit(Surv(time,censor)~tx, data = aids)
 ggsurvplot(fit,data = aids,conf.int = FALSE)
 
-aids_fit_time <- survfit(Surv(time, censor) ~ sex, data=aids)
-ggsurvplot(aids_fit_time, data=aids,  conf.int = TRUE)
+fit2 <- survfit(Surv(time,censor)~raceth, data = aids)
+ggsurvplot(fit2,data = aids,conf.int = FALSE)
 
-aids_fit_time.d <- survfit(Surv(time_d, censor_d) ~ sex, data=aids)
-ggsurvplot(aids_fit_time.d, data=aids,  conf.int = TRUE)
+fit3 <- survfit(Surv(time,censor)~sex, data = aids)
+ggsurvplot(fit3,data = aids,conf.int = FALSE)
+
+
+aids_fit_time_k <- survfit(Surv(time, censor) ~karnof  , data=aids)
+ggsurvplot(aids_fit_time_k, data=aids,  conf.int = TRUE)
 
 ```
-#Survival Analysis 
+
 ```{r}
+#Survival Analysis 
 #mutation of age
 aids <- read.csv( "http://pages.pomona.edu/~jsh04747/courses/math150/AIDSdata.csv")
 aids <- aids %>% 
@@ -110,8 +159,16 @@ aids <- aids %>%
   mutate(age = factor(age,
                        levels = c("under20", "20-30", "30-40","40-50", "50-60","60-70","over70")),  
          sex = ifelse(sex == 2, "male","female"))
+
+aids <- aids %>% 
+  mutate(cd4 = ifelse(cd4 <=50, "0-50", 
+                             ifelse(cd4 <=100, "50-100",
+                                    ifelse(cd4 <= 150, "100-150",
+                                           ifelse(cd4 <=200, "150-200",
+                                                 ifelse(cd4 <=250, "200-250",
+                                                        ifelse(cd4 <=300, "300-350", "350+"))))))) 
 ```
-Since there are many vuales of the explanatory variable "age" in the original data, we've decided to mutate the variable into age categories from under 20 to over 70 in incriments of 10 years. 
+Since there are many values of the explanatory variable "age" in the original data, we've decided to mutate the variable into age categories from under 20 to over 70 in increments of 10 years. 
 ```{r}
 library(survival)
 library (survminer)
@@ -370,12 +427,19 @@ coxph(Surv(time,censor)~sex+tx+age+txgrp, data = aids) %>% tidy()
 
 ```
 
+To better understand how nmuch the model fit changes with each different explanatory variable, we can use the graphical representation of the Aalen additive regression model. The Aalen model allows for time-varying covariate effects, while the Cox model allows only a common time-dependence through the baseline. In the Aalen model, we have the weighted comparisons of the crude estimate of the hazard rate of each group as compared to a baseline group, which here is defined as the estimate. As we can see, the selected explanatory variables in our model all have an inverse coefficient correlation with the baseline interceipt. The slope of an estimated cumulative regression function is positive when covariate increases and this fact correspond to an increasing hazard rate. On the other hand, if the slope is negative while the covariate increases, then this fact points to a decreasing hazard rate.
 ```{r}
 library(ggfortify)
 
-aa_fit <-aareg(Surv(time, censor) ~ txgrp + sex + ivdrug + hemophil + karnof, 
-                 data = aids)
-autoplot(aa_fit)
+aa_fit <-aareg(Surv(time, censor) ~ cd4 + karnof+ priorzdv +hemophil +raceth +sex +tx +ivdrug, data = aids)
+
+autoplot(aa_fit,xlab="Coefficient", ylab="Time") + labs(x = "time", y = "coefficient")
+
+
+aa_fit2 <-aareg(Surv(time, censor) ~ cd4 + karnof+ tx , data = aids)
+
+autoplot(aa_fit2) + labs(x = "time", y = "coefficient")
+
 ```
 
 The Aalen model assumes that the cumulative hazard $H(t)$ for a subject can be expressed as $a(t)$ + X $B(t)$, where $a(t)$ is a time-dependent intercept term, X is the vector of covariates for the subject possibly time-dependent, and $B(t)$ is a time-dependent matrix of coefficients.
@@ -476,24 +540,22 @@ simoutput2%>%dplyr::filter(term=="age")%>%dplyr::summarize(sum(p.value<0.05))
 
 ```
 
-# Juste's "Something New"
-I will be analyzing the Shoenfeld residuals for the Cox PH model.
+# Juste's "Something New": The Schoenfeld Residuals for the Cox PH model
 
-### 1. What is goign on? What is the topic? 2. How it is relevant? How it relates to survival analysis/analysis at hand?
-
-Cox proportional hazards (PH) model is considered a great way to identify combined effects of several covariates on the relative risk (hazard). This model assumes that the hazards of the different strata formed by the levels of the covariates are proportional. This proportional hazards assumption is particularly important and can be tested via three different clases of tests. The first class is focused on the piecewise estimation of models for subsets of data defined by stratification of time. The second one considers the interactions between covariates and some function of time. Final, third one is based on examinations of regression residuals. The Schoenfeld Residuals are a part of the third class of proportional hazard assumption testing and I will be exploring it in order to be able to eradicate a method for testing for the PH assumption in the current and future data set analyses. This topic is particularly important in relation to survival analysis since it provides an idea of whether the model is appropriate for the data set at hand and whether some covariates should be considered as variants of time in order to supply the best model for prediction of proportional hazards.
+  Cox proportional hazards (PH) model is considered a great way to identify combined effects of several covariates on the relative risk (hazard). This model assumes that the hazards of the different strata formed by the levels of the covariates are proportional. This proportional hazards assumption is particularly important and can be tested via three different classes of tests. The first class is focused on the piece-wise estimation of models for subsets of data defined by stratification of time. The second one considers the interactions between covariates and some function of time. Final, third one is based on examinations of regression residuals. The Schoenfeld Residuals are a part of the third class of proportional hazard assumption testing and I will be exploring it in order to be able to eradicate a method for testing for the PH assumption in the current and future data set analyses. This topic is particularly important in relation to survival analysis since it provides an idea of whether the model is appropriate for the data set at hand and whether some covariates should be considered as variants of time in order to supply the best model for prediction of proportional hazards.
+  Taking a completely new model of analyzing survival data is particularly difficult since the mathematical derivations and notations are also very varied from what we have seen in class. Although, I do remember some of the ideas behind parametric functions, their applications to statistical models are much more challenging than I have expected. Therefore, it will require me a lot of time and extensive research to be able to understand and learn how to apply this model to our data and other instances of survival analysis.
 
 ### 3. Resources to learn about the topic.
 
-I have been researching articles and scientific journals that provide insights into tthe Schoenfeld residuals and their use in the Cox PH model. 
+I have been researching articles and scientific journals that provide insights into the Schoenfeld residuals and their use in the Cox PH model. 
 Sources include: 
 
 1. https://onlinelibrary.wiley.com/doi/full/10.1111/ajps.12176
 2. https://rstudio-pubs-static.s3.amazonaws.com/39354_34153ff19e624116bd2fbdec7d2534aa.html 
 
-### 4. What will be challenging about learning something new?
 
-Taking a completely new model of analyzing survival data is particulalrly difficult since the mathematical derivations and notations are also very varied from what we have seen in class. Although, I do remember some of the ideas behind parametric functions, their applications to statistical models are much more challenging than I have expected. Therefore, it will require me a lot of time and extensive research to be able to understand and learn how to apply this model to our data and other instances of survival analysis.
+
+
 
 ### Explanation of the Theory Behind Schoenfeld Residuals
 
@@ -507,14 +569,14 @@ This notation indicates that $z_{ij}$ is allowed to vary as a function of the ti
   + $h_0$ -> baseline hazard
   + $z_i(t)$ -> 1 x $p$ vector of covariates for unit $i$ each of which can be time fixed or time-varying.
 
-2) However, another possibility has been presented by Therneau and Granbsh in 2000, where they proposed an idea that there ciuyld be an alternative to the current Cox model, where the coefficient of the estimate could also be varying as a function of time.
+2) However, another possibility has been presented by Therneau and Granbsh in 2000, where they proposed an idea that there could be an alternative to the current Cox model, where the coefficient of the estimate could also be varying as a function of time.
 
 > The new hazard function would look like this: $h_i(t)=h_0(t)e^{z_i(t)\beta(t)}$
 
 Therefore, in order to examine thee two models in a case when $\beta=\beta(t)$ requires a residual analysis that could indicate whether a model should consider a covariate as a variable with time.
 
 ***
-Due to the fact that that some observations might be censored and in particular, regarding the Cox PH model, the baseline hazard is not estimated, in oprder to analyse the residuals a particular score process. The risk score for unit $i$ at time $t$ is thought to be $r_i(t)=e^{z_i(t)\beta}$, where $Y_i(t)$ is the indicator function and $Y_i(t)=1$ indicates a point in which $i$ is under risk and thus observation and it is equal to 0 in other occasions.
+Due to the fact that that some observations might be censored and in particular, regarding the Cox PH model, the baseline hazard is not estimated, in order to analyse the residuals a particular score process. The risk score for unit $i$ at time $t$ is thought to be $r_i(t)=e^{z_i(t)\beta}$, where $Y_i(t)$ is the indicator function and $Y_i(t)=1$ indicates a point in which $i$ is under risk and thus observation and it is equal to 0 in other occasions.
 
 ***
 
@@ -523,7 +585,7 @@ The Schoenfeld residuals are given by the equations:
 1. $s_k=Z_{(k)}-\frac{\sum_iY_i(t_k)r_i(t_k)Z_i(t_k)}{\sum_iY_i(t_k)r_i(t_k)}$
 2. $s_k=Z_{(k)}-\bar{z}(\hat{\beta},t_k)$
 
-In this case, the $Z(k)$ is the covariate vector of the particular unit that is experiencing the evnt at time $k$; $\hat{\beta}$ is the estimate of $\beta$ and $\bar{z}(\hat{\beta},t_k)$ is the wighted mean of covariate values.
+In this case, the $Z(k)$ is the covariate vector of the particular unit that is experiencing the event at time $k$; $\hat{\beta}$ is the estimate of $\beta$ and $\bar{z}(\hat{\beta},t_k)$ is the weighted mean of covariate values.
 
 Furthermore, the weighted variance can be represented by the derived equation at the $k^{th}$ time as
 
@@ -539,7 +601,7 @@ $s^*_k=m\sum^d_{k=1}V(\hat{\beta},t_k)s_k$
 
 here, $m$ is the total number of deaths in the data set.
 
-Following the calculations, the residuals are plotted against time in order to test the prportional hazards assumption. If the assumption is correct, the residuals should be fiting around the line centered at zero (y=0). The further away this predicted line is form the horizontal of (y=0) the more likely one is to call the PH assumption to question and determine whether it is met through the model.
+Following the calculations, the residuals are plotted against time in order to test the proportional hazards assumption. If the assumption is correct, the residuals should be fitting around the line centered at zero (y=0). The further away this predicted line is form the horizontal of (y=0) the more likely one is to call the PH assumption to question and determine whether it is met through the model.
 
 ***
 > To go a little deeper into the analysis of the resiaul calculation, one can look at the calculations of the test statistic for this residual mdoel.
@@ -548,16 +610,16 @@ By producing a least squares slope of regression and assuming a relationship bet
 
 $T_j=\frac{[\sum^d_{k=1}(g(t_k)-\hat{g})s^8_{kj}]^2}{dI^{jj}\sum^d_{k=1}(g(t_k)-\hat{g})^2}$
 
-Here, the distribution is asymptotical as $X^2(1)$ stating the null hypothesis that the relationship between the covariate, in this case $j$ and the evnt time follows the assumption of PH.
+Here, the distribution is asymptotically as $X^2(1)$ stating the null hypothesis that the relationship between the covariate, in this case $j$ and the event time follows the assumption of PH.
 
 ***
 
 > Interpretation of Schoenfeld Residuals from plots in R and the p-values presented.
 
-The y-axis of the Schoenfeld residuals graph can be interpreted as the log of the hazard ratio for the explanatory variable-- the coefficient in Cox’s model if it were allow to vary over time. If the graph is flat, then the PH assumption is adequate. Furthermore, the Schoenfeld residuals are independent of time. A plot that shows a non-random pattern against time is evidence of violation of the PH assumption. The PH assumption is supported when there's a non-significan relationship between residuals and time.
+The y-axis of the Schoenfeld residuals graph can be interpreted as the log of the hazard ratio for the explanatory variable-- the coefficient in Cox’s model if it were allow to vary over time. If the graph is flat, then the PH assumption is adequate. Furthermore, the Schoenfeld residuals are independent of time. A plot that shows a non-random pattern against time is evidence of violation of the PH assumption. The PH assumption is supported when there's a non-significant relationship between residuals and time.
 ### HIV Data Cox PH model analysis using Schoenfeld Residuals
 
-Schoenfeld Residuals applied to our best Cox PH model for AIDS data where, we have an additive model of explanatory variables: baseline cd4 count, iv drug use history, and karnofsky performance scale score:
+Schoenfeld Residuals applied to our best Cox PH model for AIDS data where, we have an additive model of explanatory variables: baseline CD4 count, iv drug use history, and karnofsky performance scale score:
 ```{r}
 cph_r10 <- coxph(Surv(time,censor)~.-priorzdv -id -hemophil -raceth -time_d -strat2 
                  -sex -txgrp -age -tx -censor_d, data = aids)
@@ -569,8 +631,9 @@ ggcoxdiagnostics(cph_r10, type="schoenfeld")
 
 ```
 
-Using the best determined Cox PH model for our data, we can look at the Schoenfeld residuals to determine if the PH assumption is met. Via the function "ggcoxzph()"", which produces, for each covariate, graphs of the scaled Schoenfeld residuals against the transformed time. Here, the solid line is a smoothing spline fit to the plot, with the dashed lines representing a +/- 2-standard-error. from these graphs, we don't see any patterns or significance of the residual fit regarding the graphs of the covariates with time. Therefore, the assumption of proportional hazrads seems to be supported for the covariates: baseline cd4 count, iv drug use history, and karnofsky performance scale score.
+Using the best determined Cox PH model for our data, we can look at the Schoenfeld residuals to determine if the PH assumption is met. Via the function "ggcoxzph()"", which produces, for each covariate, graphs of the scaled Schoenfeld residuals against the transformed time. Here, the solid line is a smoothing spline fit to the plot, with the dashed lines representing a +/- 2-standard-error. from these graphs, we don't see any patterns or significance of the residual fit regarding the graphs of the covariates with time. Therefore, the assumption of proportional hazards seems to be supported for the covariates: baseline CD4 count, iv drug use history, and karnofsky performance scale score.
 
-Using the ggcoxdiagnostics() function we can provide another graphic representation of the residual distribution in regards to the covariates with time. Here, we also see that there's no particular pattern of the residuals around the line of fit, threfore again, we can state that the PH assumption has been met.
+Using the ggcoxdiagnostics() function we can provide another graphic representation of the residual distribution in regards to the covariates with time. Here, we also see that there's no particular pattern of the residuals around the line of fit, therefore again, we can state that the PH assumption has been met.
 
-
+References:
+1. http://www.ukm.my/jsm/pdf_files/SM-PDF-46-3-2017/15%20Aditif%20Aalen.pdf 
