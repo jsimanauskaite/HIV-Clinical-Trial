@@ -8,8 +8,8 @@ output:
     highlight: tango
     toc: true
     toc_depth: 6
-    fig_width: 10
-    fig_height: 10
+    fig_width: 30
+    fig_height: 15
     fig_crop: false
   html_document: default
 ---
