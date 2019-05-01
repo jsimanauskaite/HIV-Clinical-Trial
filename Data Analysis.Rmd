@@ -1,7 +1,8 @@
 ---
 title: "Data Analysis"
 author: "Juste Simanauskaite & Patricia Rivera"
-output: html_document
+output: pdf_document
+
 ---
 
 ```{r global_options, include=TRUE, message=FALSE, warning=FALSE}
@@ -12,9 +13,61 @@ library(plyr)
 library(survival)
 library(survminer)
 aids <- read.csv( "http://pages.pomona.edu/~jsh04747/courses/math150/AIDSdata.csv")
+dim(aids)
+summary(aids)
 
+```
+
+The data set contains a sample size equal to 851 participants and 16 different variables.
+
+```{r}
+library(plotrix)
+male<-sum(aids$sex==1)
+female<-sum(aids$sex==2)
+slices <- c(male, female) 
+lbls <- c("Male", "Female")
+pct <- round(slices/sum(slices)*100)
+lbls <- paste(lbls, pct) 
+lbls <- paste(lbls,"%",sep="") 
+pie3D(slices,labels=lbls,explode=0.1,
+   main="Gender Distribution ")
+```
+The Pie Chart represents the gender distribution in the sample, with 84% male and 16% female.
+```{r}
+wnh<-sum(aids$raceth==1)
+bnh<-sum(aids$raceth==2)
+h<-sum(aids$raceth==3)
+api<-sum(aids$raceth==4)
+aian<-sum(aids$raceth==5)
+oth<-sum(aids$raceth==6)
+slices <- c(wnh,bnh,h,api,aian,oth) 
+lbls <- c("White Non-Hispanic", "Black Non-Hispanic", "Hispanic","Asian, Pacific Islander", "American Indian, Alaskan Native", "Other/unknown")
+pct <- round(slices/sum(slices)*100)
+lbls <- paste(lbls, pct) 
+lbls <- paste(lbls,"%",sep="") 
+pie(slices,lbls,col = rainbow(length(lbls)) )
+
+```
+```{r}
+never<-sum(aids$ivdrug==1)
+cur<-sum(aids$ivdrug==2)
+prev<-sum(aids$ivdrug==3)
+slices <- c(never,cur,prev) 
+lbls <- c("Never", "Currently", "Previously")
+pct <- round(slices/sum(slices)*100)
+lbls <- paste(lbls, pct) 
+lbls <- paste(lbls,"%",sep="") 
+pie3D(slices,labels=lbls,explode=0.1,col=c("turquoise","magenta","salmon"),
+   main="IV Drug Use History ")
+
+```
+
+
+```{r global_options, include=TRUE, message=FALSE, warning=FALSE}
 summary(aids)
 hist(aids$time)
+
+###Data Plots
 
 fit <- survfit(Surv(time,censor)~tx, data = aids)
 ggsurvplot(fit,data = aids,conf.int = FALSE)
