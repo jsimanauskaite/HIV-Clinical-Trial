@@ -174,129 +174,12 @@ library(survival)
 library (survminer)
 library(ggplot2)
 library(broom)
-
-##### backwards selection ######
-
-
-#full model
-cph_full<- coxph(Surv(time,censor)~.-time_d -censor_d, data = aids)
-cph_full$loglik
-cph_full
-
-#reduced model 1
-cph_r1 <- coxph(Surv(time,censor)~.-time_d -censor_d -priorzdv, data = aids) 
-cph_r1$loglik
-cph_r1
-
-#likelihood ratio test
-stat1<- 2*(cph_full$loglik[2]-cph_r1$loglik[2])
-1-pchisq(stat1,1)
-
-#reduced model 2
-cph_r2 <- coxph(Surv(time,censor)~. -time_d -censor_d -priorzdv -id, data = aids)
-cph_r2$loglik
-cph_r2
-
-
-#likelihood ratio test
-stat2 <- 2*(cph_r1$loglik[2]-cph_r2$loglik[2])
-1-pchisq(stat2,1)
-
-
-#reduced model 3
-cph_r3 <- coxph(Surv(time,censor)~.-time_d -censor_d -priorzdv -id -hemophil, data = aids)
-cph_r3$loglik
-cph_r3
-
-
-#likelihood ratio test
-stat3 <- 2*(cph_r3$loglik[2]-cph_r2$loglik[2])
-1-pchisq(stat3,1)
-
-
-#reduced model 4
-cph_r4 <- coxph(Surv(time,censor)~.-time_d -censor_d -priorzdv -id -hemophil -raceth, data = aids)
-cph_r4$loglik
-cph_r4
-
-#likelihood ratio test
-stat4 <- 2*(cph_r3$loglik[2]-cph_r4$loglik[2])
-1-pchisq(stat4,1)
-
-
-#reduced model 5
-cph_r5 <- coxph(Surv(time,censor)~.-time_d -censor_d -priorzdv -id -hemophil -raceth, data = aids)
-cph_r5$loglik
-cph_r5
-
-#likelihood ratio test
-stat5 <- 2*(cph_r5$loglik[2]-cph_r4$loglik[2])
-1-pchisq(stat5,1)
-
-#reduced model 6
-cph_r6 <- coxph(Surv(time,censor)~.-time_d -censor_d -priorzdv -id -hemophil -raceth -strat2, data = aids)
-cph_r6$loglik
-cph_r6
-
-#likelihood ratio test
-stat6 <- 2*(cph_r5$loglik[2]-cph_r6$loglik[2])
-1-pchisq(stat6,1)
-
-
-#reduced model 7
-cph_r7 <- coxph(Surv(time,censor)~.-time_d -censor_d -priorzdv -id -hemophil -raceth -strat2 -sex, data = aids)
-cph_r7$loglik
-cph_r7
-
-
-#likelihood ratio test
-stat7 <- 2*(cph_r6$loglik[2]-cph_r7$loglik[2])
-1-pchisq(stat7,1)
-
-
-#reduced model 8
-cph_r8 <- coxph(Surv(time,censor)~.-time_d -censor_d -priorzdv -id -hemophil -raceth -strat2 -sex -txgrp -age, data = aids)
-cph_r8$loglik
-cph_r8
-
-#likelihood ratio test
-stat8 <- 2*(cph_r7$loglik[2]-cph_r8$loglik[2])
-1-pchisq(stat8,1)
-
-
-#reduced model 9
-cph_r9 <- coxph(Surv(time,censor)~.-time_d -censor_d -priorzdv -id -hemophil -raceth -strat2 -sex -txgrp -age -ivdrug, data = aids)
-cph_r9$loglik
-cph_r9
-
-
-###best model using backwards selection?
-#likelihood ratio test
-stat9 <- 2*(cph_r8$loglik[2]-cph_r9$loglik[2])
-1-pchisq(stat9,1)
-
-#reduced model 10
-cph_r10 <- coxph(Surv(time,censor)~.-priorzdv -id -hemophil -raceth -time_d -strat2 -sex -txgrp -age -tx -censor_d, data = aids)
-cph_r10$loglik
-cph_r10
-
-
-#NOTE: should we take out censor_d anyways since its related to censor or keep it?
-#likelihood ratio test
-stat10 <- 2*(cph_r9$loglik[2]-cph_r10$loglik[2])
-1-pchisq(stat10,1)
-
-cph_r11 <- coxph(Surv(time,censor)~.-priorzdv -id -hemophil -raceth -time_d -strat2 -sex -txgrp -age -tx -censor_d -ivdrug, data = aids)
-cph_r11$loglik
-cph_r11
-
-stat11 <- 2*(cph_r10$loglik[2]-cph_r11$loglik[2])
-1-pchisq(stat11,1)
 ```
 
 
-
 ```{r}
+### COX PH MODEL USING BACKWARDS SELECTION ####
+
 #full model
 cp_full<- coxph(Surv(time_d,censor_d)~.-time -censor, data = aids)
 cp_full$loglik
@@ -368,14 +251,6 @@ cp_red7
 s7 <- 2*(cp_red6$loglik[2]-cp_red7$loglik[2])
 1-pchisq(s7,1)
 
-#reduced model 8
-#cp_red8<- coxph(Surv(time_d,censor_d)~.-time -censor -txgrp -ivdrug -priorzdv -raceth -strat2 -hemophil -sex -id -tx, data=aids)
-#cp_red8$loglik
-#cp_red8
-
-#likelihood ratio
-#s8 <- 2*(cp_red7$loglik[2]-cp_red8$loglik[2])
-#1-pchisq(s8,1)
 ```
 
 
