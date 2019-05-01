@@ -3,6 +3,7 @@ title: "Survival Analysis Project: HIV Clinical Trial"
 author: "Juste Simanauskaite & Patricia Rivera"
 geometry: margin=2cm
 output: 
+  html_document: default
   pdf_document: 
     highlight: tango
     toc: true
@@ -10,10 +11,7 @@ output:
     fig_width: 7
     fig_height: 6
     fig_crop: false
-
     
-  html_document: default
-
 ---
 # Introduction
   HIV (Human Immunodeficiency Virus) is a disease known as an immune system disorder, which causes severe destruction of white blood cells that are responsible for fighting infection. The presence of this disorder is a lead-in for a human to be more prone to infections and cancer diseases. AIDS is the final stage of HIV, which is not always developed in HIV patients. Zidovudine (AZT) is known as antiretroviral medication for prevention of HIV/AIDS, whereas lamuvidine (3TC) is an inhibitor medication that works in decreasing HIV and hepatitis B. Previously, it has been founded that three-drug combinations, in particular, with a previous exposure to AZT, have shown the most significant resulted in reducing HIV-1 RNA concentrations. Therefore, this study used indinavir sulfate (a synthetic antiviral agent that inhibits HIV protease activity) in combination with AZT and 3TC as well as variation of placebo treatments to determine the potency of triple drug therapy in the cases of  advanced HIV-1 patients. The study hypothesized that a three-drug combination, including a HIV-protease inhibitor and two nucleoside analogues (AZT and 3TC) would alter the progression of the HIV-1 disease. The study was successful in reaching significant data of the clinical superiority of a three-drug approach with inidavor over a treatment containing only a two-drug combination.
@@ -60,18 +58,18 @@ female<-sum(aids$sex=="female")
 slices <- c(male, female) 
 lbls <- c("Male","Female")
 pct <- round(slices/sum(slices)*100)
-lbls <- paste(lbls, pct) 
-lbls <- paste(lbls,"%",sep="") 
 df = data.frame(slices = pct,labels =  lbls)
-sexplot<- ggplot(df,aes(x = factor(1),y=slices,  fill = labels)) +
+sexplot<- ggplot(df,aes(x = factor(1),y=pct,  fill = labels)) +
          geom_bar(stat="identity", width = 1)+
         coord_polar(theta = "y")+
         theme(axis.line = element_blank(),
           axis.text = element_blank(),
           axis.ticks = element_blank(),
           axis.title = element_blank())
-print(sexplot + ggtitle("Gender Distribution")+ scale_fill_manual(values=c("#55DDE0", "#33658A","#2F4858"))+ labs(x = NULL, y = NULL, fill = NULL))
-
+print(sexplot + ggtitle("Gender Distribution")+ 
+        scale_fill_manual(values=c("#55DDE0", "#33658A",
+                                   "#2F4858"))+
+        labs(x = NULL, y = NULL, fill = NULL))
 
 ```
 The Pie Chart represents the gender distribution in the sample, with 84% male and 16% female. This shows the potential for the data to not be able to correctly represent the difference of the data variance by gender, if there were to be one. Therefore, gender is something to look into in future data analysis.
@@ -97,7 +95,11 @@ ethplot<- ggplot(df,aes(x = factor(1),y=slices,  fill = labels)) +
           axis.text = element_blank(),
           axis.ticks = element_blank(),
           axis.title = element_blank())
-print(ethplot + ggtitle("Race/Ethnicity Distribution among participants")+ scale_fill_manual(values=c("#55DDE0", "#33658A", "#2F4858", "#F6AE2D", "#F26419", "#999999"))+ labs(x = NULL, y = NULL, fill = NULL))
+print(ethplot + ggtitle("Race/Ethnicity Distribution among participants")+
+        scale_fill_manual(values=c("#55DDE0", "#33658A",
+                                   "#2F4858", "#F6AE2D", "#F26419", 
+                                   "#999999"))+ labs(x = NULL, y = NULL,
+                                                     fill = NULL))
 
 
 
@@ -120,7 +122,11 @@ ivplot<- ggplot(df,aes(x = factor(1),y=slices,  fill = labels)) +
           axis.text = element_blank(),
           axis.ticks = element_blank(),
           axis.title = element_blank())
-print(ethplot + ggtitle("IV Drug Use History")+ scale_fill_manual(values=c("#56ADE3", "#12358A", "#F41288", "#F7BE6D", "#F26569", "#A65674"))+ labs(x = NULL, y = NULL, fill = NULL))
+print(ethplot + ggtitle("IV Drug Use History")+ 
+        scale_fill_manual(values=c("#56ADE3", "#12358A", 
+                                   "#F41288", "#F7BE6D", "#F26569",
+                                   "#A65674"))+ 
+        labs(x = NULL, y = NULL, fill = NULL))
 
 ```
 From this chart we see that most of the participants (84%) have never used IV drugs, whereas 16% of participants have some type of history of usage and none of the participants reported to be currently using the drugs.
@@ -128,19 +134,22 @@ From this chart we see that most of the participants (84%) have never used IV dr
 
 ```{r}
 
+fit <- survfit(Surv(time,censor)~1, data = aids)
+ggsurvplot(fit,data = aids,conf.int = FALSE) + ggtitle("Overall")
 
-fit <- survfit(Surv(time,censor)~tx, data = aids)
-ggsurvplot(fit,data = aids,conf.int = FALSE)
+fit1 <- survfit(Surv(time,censor)~tx, data = aids)
+ggsurvplot(fit1,data = aids,conf.int = FALSE) + ggtitle("Treatment Indicator")
 
 fit2 <- survfit(Surv(time,censor)~raceth, data = aids)
-ggsurvplot(fit2,data = aids,conf.int = FALSE)
+ggsurvplot(fit2,data = aids,conf.int = FALSE) + ggtitle("Race/Ethnicity")
 
-fit3 <- survfit(Surv(time,censor)~sex, data = aids)
-ggsurvplot(fit3,data = aids,conf.int = FALSE)
+fit3 <- survfit(Surv(time,censor)~ivdrug, data = aids)
+ggsurvplot(fit3,data = aids,conf.int = FALSE) + ggtitle("IV Drug Use History")
 
 
 aids_fit_time_k <- survfit(Surv(time, censor) ~karnof  , data=aids)
-ggsurvplot(aids_fit_time_k, data=aids,  conf.int = TRUE)
+ggsurvplot(aids_fit_time_k, data=aids,  conf.int = TRUE) +
+  ggtitle("Karnofsky Performance Score")
 
 ```
 
@@ -168,7 +177,7 @@ aids <- aids %>%
                                                  ifelse(cd4 <=250, "200-250",
                                                         ifelse(cd4 <=300, "300-350", "350+"))))))) 
 ```
-Since there are many values of the explanatory variable "age" in the original data, we've decided to mutate the variable into age categories from under 20 to over 70 in increments of 10 years. 
+Since there are many values of the explanatory variable *age* in the original data, we've decided to mutate the variable into age categories from under 20 to over 70 in increments of 10 years. Similar modifications have been made to the baseline *CD4* count, just in incrimennts of 50 up until 350+. Furthermore, we changed the labeling and representation of *sex* into "male" and "female" instead of "1" and "2" in the data.
 ```{r}
 library(survival)
 library (survminer)
