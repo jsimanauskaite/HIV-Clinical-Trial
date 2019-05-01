@@ -17,10 +17,11 @@ output:
 ---
 # Introduction
   HIV (Human Immunodeficiency Virus) is a disease known as an immune system disorder, which causes severe destruction of white blood cells that are responsible for fighting infection. The presence of this disorder is a lead-in for a human to be more prone to infections and cancer diseases. AIDS is the final stage of HIV, which is not always developed in HIV patients. Zidovudine (AZT) is known as antiretroviral medication for prevention of HIV/AIDS, whereas lamuvidine (3TC) is an inhibitor medication that works in decreasing HIV and hepatitis B. Previously, it has been founded that three-drug combinations, in particular, with a previous exposure to AZT, have shown the most significant resulted in reducing HIV-1 RNA concentrations. Therefore, this study used indinavir sulfate (a synthetic antiviral agent that inhibits HIV protease activity) in combination with AZT and 3TC as well as variation of placebo treatments to determine the potency of triple drug therapy in the cases of  advanced HIV-1 patients. The study hypothesized that a three-drug combination, including a HIV-protease inhibitor and two nucleoside analogues (AZT and 3TC) would alter the progression of the HIV-1 disease. The study was successful in reaching significant data of the clinical superiority of a three-drug approach with inidavor over a treatment containing only a two-drug combination.
-  
+
+The current analysis of the data from a study conducted by Hammer et al. in 1997 considers the response variable to be *time*, which here describes the amount of time in days for the time of death, AIDS diagnosis, or the termination of the study. Another important variable used for the analysis is *censor*, which indicates the paarticipants of the study that survived till the termination of the study without dying or being diagnosed AIDS. The study explored the influence of the explanatory varibale *tx*. referring to the treatment group that was differentiated into: a control (placebo group) and a treatment group that included IDV (indinavir)
 # Methods
 
-The study was a randomized, double-blind, and a placebo-controlled trial that compared a three-drug treatment of indinavir (Crixivan), zidovudine (AZT) and lamivudine (3TC) with a two-drug treatment. A total of 1156 patients were selected based on the factor that they had no more than 200 CD4 cells per cubic millimetear at least 3 months prioir to AZT therapy. The patients had to be more than 16 years old, with a diagnostic documentation of HIV-1 infection, having no more than 1 week of prior lamuvidine treatment, and a Karnofsky score of at least 70.
+The study was a randomized, double-blind, and a placebo-controlled trial that compared a three-drug treatment of indinavir (Crixivan), zidovudine (AZT) and lamivudine (3TC) with a two-drug treatment. Patients were selected based on the factor that they had no more than 200 CD4 cells per cubic millimetear at least 3 months prioir to AZT therapy. The patients had to be more than 16 years old, with a diagnostic documentation of HIV-1 infection, having no more than 1 week of prior lamuvidine treatment, and a Karnofsky score of at least 70.
 
 The approved patients received 200mg of open-label zidovudine three times daily and 150mg of lamuvidine two times daily and were randomly assigned to a placebo or a treatment of 800mg of indinavir every eight hours.
 
@@ -50,19 +51,28 @@ summary(aids)
 
 ```
 
-The data set contains a sample size equal to 851 participants and 16 different variables.
+The data set contains a sample size equal to 851 participants and 16 different variables. Out of these participants 782 were considered as uncensored data point, which indicates that these patients survived through the course of the study without diagnosis of AIDS and/or death. 69 were found to be censored meaning that either there was an occurence of death or AIDS diagnosis, out of which it is known that 20 patients died throughout the course of the study.
 
 ```{r}
 library(plotrix)
-male<-sum(aids$sex==1)
-female<-sum(aids$sex==2)
+male<-sum(aids$sex=="male")
+female<-sum(aids$sex=="female")
 slices <- c(male, female) 
-lbls <- c("Male", "Female")
+lbls <- c("Male","Female")
 pct <- round(slices/sum(slices)*100)
 lbls <- paste(lbls, pct) 
 lbls <- paste(lbls,"%",sep="") 
-pie3D(slices,labels=lbls,explode=0.1,
-   main="Gender Distribution ", cex.lab=0.1)
+df = data.frame(slices = pct,labels =  lbls)
+sexplot<- ggplot(df,aes(x = factor(1),y=slices,  fill = labels)) +
+         geom_bar(stat="identity", width = 1)+
+        coord_polar(theta = "y")+
+        theme(axis.line = element_blank(),
+          axis.text = element_blank(),
+          axis.ticks = element_blank(),
+          axis.title = element_blank())
+print(sexplot + ggtitle("Gender Distribution")+ scale_fill_manual(values=c("#55DDE0", "#33658A","#2F4858"))+ labs(x = NULL, y = NULL, fill = NULL))
+
+
 ```
 The Pie Chart represents the gender distribution in the sample, with 84% male and 16% female. This shows the potential for the data to not be able to correctly represent the difference of the data variance by gender, if there were to be one. Therefore, gender is something to look into in future data analysis.
 ```{r}
@@ -78,7 +88,18 @@ lbls <- c("White Non-Hispanic", "Black Non-Hispanic", "Hispanic","Asian, Pacific
 pct <- round(slices/sum(slices)*100)
 lbls <- paste(lbls, pct) 
 lbls <- paste(lbls,"%",sep="") 
-pie(slices,lbls,col = rainbow(length(lbls)), cex=0.5 )
+df = data.frame(slices = slices,labels =  lbls)
+
+ethplot<- ggplot(df,aes(x = factor(1),y=slices,  fill = labels)) +
+         geom_bar(stat="identity", width = 1)+
+        coord_polar(theta = "y")+
+        theme(axis.line = element_blank(),
+          axis.text = element_blank(),
+          axis.ticks = element_blank(),
+          axis.title = element_blank())
+print(ethplot + ggtitle("Race/Ethnicity Distribution among participants")+ scale_fill_manual(values=c("#55DDE0", "#33658A", "#2F4858", "#F6AE2D", "#F26419", "#999999"))+ labs(x = NULL, y = NULL, fill = NULL))
+
+
 
 ```
 The distribution of race/ethnicity shows that the greatest number of participants consists of white non-Hispanic identifying individuals, with black non-Hispanic following and Hispanic as the 3rd largest represented group.
@@ -91,29 +112,40 @@ lbls <- c("Never", "Currently", "Previously")
 pct <- round(slices/sum(slices)*100)
 lbls <- paste(lbls, pct) 
 lbls <- paste(lbls,"%",sep="") 
-pie3D(slices,labels=lbls,explode=0.1,col=c("turquoise","magenta","salmon"),cex.sub=0.5,
-   main="IV Drug Use History ")
+df = data.frame(slices = slices,labels =  lbls)
+ivplot<- ggplot(df,aes(x = factor(1),y=slices,  fill = labels)) +
+         geom_bar(stat="identity", width = 1)+
+        coord_polar(theta = "y")+
+        theme(axis.line = element_blank(),
+          axis.text = element_blank(),
+          axis.ticks = element_blank(),
+          axis.title = element_blank())
+print(ethplot + ggtitle("IV Drug Use History")+ scale_fill_manual(values=c("#56ADE3", "#12358A", "#F41288", "#F7BE6D", "#F26569", "#A65674"))+ labs(x = NULL, y = NULL, fill = NULL))
 
 ```
 From this chart we see that most of the participants (84%) have never used IV drugs, whereas 16% of participants have some type of history of usage and none of the participants reported to be currently using the drugs.
 
-```{r}
-hist(aids$time)
 
-###Data Plots
+```{r}
+
 
 fit <- survfit(Surv(time,censor)~tx, data = aids)
 ggsurvplot(fit,data = aids,conf.int = FALSE)
 
-aids_fit_time <- survfit(Surv(time, censor) ~ sex, data=aids)
-ggsurvplot(aids_fit_time, data=aids,  conf.int = TRUE)
+fit2 <- survfit(Surv(time,censor)~raceth, data = aids)
+ggsurvplot(fit2,data = aids,conf.int = FALSE)
 
-aids_fit_time.d <- survfit(Surv(time_d, censor_d) ~ sex, data=aids)
-ggsurvplot(aids_fit_time.d, data=aids,  conf.int = TRUE)
+fit3 <- survfit(Surv(time,censor)~sex, data = aids)
+ggsurvplot(fit3,data = aids,conf.int = FALSE)
+
+
+aids_fit_time_k <- survfit(Surv(time, censor) ~karnof  , data=aids)
+ggsurvplot(aids_fit_time_k, data=aids,  conf.int = TRUE)
 
 ```
-#Survival Analysis 
+
 ```{r}
+#Survival Analysis 
 #mutation of age
 aids <- read.csv( "http://pages.pomona.edu/~jsh04747/courses/math150/AIDSdata.csv")
 aids <- aids %>% 
@@ -127,6 +159,14 @@ aids <- aids %>%
   mutate(age = factor(age,
                        levels = c("under20", "20-30", "30-40","40-50", "50-60","60-70","over70")),  
          sex = ifelse(sex == 2, "male","female"))
+
+aids <- aids %>% 
+  mutate(cd4 = ifelse(cd4 <=50, "0-50", 
+                             ifelse(cd4 <=100, "50-100",
+                                    ifelse(cd4 <= 150, "100-150",
+                                           ifelse(cd4 <=200, "150-200",
+                                                 ifelse(cd4 <=250, "200-250",
+                                                        ifelse(cd4 <=300, "300-350", "350+"))))))) 
 ```
 Since there are many values of the explanatory variable "age" in the original data, we've decided to mutate the variable into age categories from under 20 to over 70 in increments of 10 years. 
 ```{r}
@@ -301,13 +341,20 @@ coxph(Surv(time,censor)~sex+tx+age+txgrp, data = aids) %>% tidy()
 
 ```
 
+To better understand how nmuch the model fit changes with each different explanatory variable, we can use the graphical representation of the Aalen additive regression model. The Aalen model allows for time-varying covariate effects, while the Cox model allows only a common time-dependence through the baseline. In the Aalen model, we have the weighted comparisons of the crude estimate of the hazard rate of each group as compared to a baseline group, which here is defined as the estimate. As we can see, the selected explanatory variables in our model all have an inverse coefficient correlation with the baseline interceipt. The slope of an estimated cumulative regression function is positive when covariate increases and this fact correspond to an increasing hazard rate. On the other hand, if the slope is negative while the covariate increases, then this fact points to a decreasing hazard rate.
 ```{r}
 
 library(ggfortify)
 
-aa_fit <-aareg(Surv(time, censor) ~ txgrp + sex + ivdrug + hemophil + karnof, 
-                 data = aids)
-autoplot(aa_fit)
+aa_fit <-aareg(Surv(time, censor) ~ cd4 + karnof+ priorzdv +hemophil +raceth +sex +tx +ivdrug, data = aids)
+
+autoplot(aa_fit,xlab="Coefficient", ylab="Time") + labs(x = "time", y = "coefficient")
+
+
+aa_fit2 <-aareg(Surv(time, censor) ~ cd4 + karnof+ tx , data = aids)
+
+autoplot(aa_fit2) + labs(x = "time", y = "coefficient")
+
 ```
 
 The Aalen model assumes that the cumulative hazard $H(t)$ for a subject can be expressed as $a(t)$ + X $B(t)$, where $a(t)$ is a time-dependent intercept term, X is the vector of covariates for the subject possibly time-dependent, and $B(t)$ is a time-dependent matrix of coefficients.
@@ -376,12 +423,10 @@ simoutput%>%dplyr::filter(term=="X4")%>%dplyr::summarize(sum(p.value<0.05))
 
 
 
-# Juste's "Something New"
-I will be analyzing the Shoenfeld residuals for the Cox PH model.
+# Juste's "Something New": The Schoenfeld Residuals for the Cox PH model
 
-### 1. What is goign on? What is the topic? 2. How it is relevant? How it relates to survival analysis/analysis at hand?
-
-Cox proportional hazards (PH) model is considered a great way to identify combined effects of several covariates on the relative risk (hazard). This model assumes that the hazards of the different strata formed by the levels of the covariates are proportional. This proportional hazards assumption is particularly important and can be tested via three different classes of tests. The first class is focused on the piece-wise estimation of models for subsets of data defined by stratification of time. The second one considers the interactions between covariates and some function of time. Final, third one is based on examinations of regression residuals. The Schoenfeld Residuals are a part of the third class of proportional hazard assumption testing and I will be exploring it in order to be able to eradicate a method for testing for the PH assumption in the current and future data set analyses. This topic is particularly important in relation to survival analysis since it provides an idea of whether the model is appropriate for the data set at hand and whether some covariates should be considered as variants of time in order to supply the best model for prediction of proportional hazards.
+  Cox proportional hazards (PH) model is considered a great way to identify combined effects of several covariates on the relative risk (hazard). This model assumes that the hazards of the different strata formed by the levels of the covariates are proportional. This proportional hazards assumption is particularly important and can be tested via three different classes of tests. The first class is focused on the piece-wise estimation of models for subsets of data defined by stratification of time. The second one considers the interactions between covariates and some function of time. Final, third one is based on examinations of regression residuals. The Schoenfeld Residuals are a part of the third class of proportional hazard assumption testing and I will be exploring it in order to be able to eradicate a method for testing for the PH assumption in the current and future data set analyses. This topic is particularly important in relation to survival analysis since it provides an idea of whether the model is appropriate for the data set at hand and whether some covariates should be considered as variants of time in order to supply the best model for prediction of proportional hazards.
+  Taking a completely new model of analyzing survival data is particularly difficult since the mathematical derivations and notations are also very varied from what we have seen in class. Although, I do remember some of the ideas behind parametric functions, their applications to statistical models are much more challenging than I have expected. Therefore, it will require me a lot of time and extensive research to be able to understand and learn how to apply this model to our data and other instances of survival analysis.
 
 ### 3. Resources to learn about the topic.
 
@@ -391,9 +436,9 @@ Sources include:
 1. https://onlinelibrary.wiley.com/doi/full/10.1111/ajps.12176
 2. https://rstudio-pubs-static.s3.amazonaws.com/39354_34153ff19e624116bd2fbdec7d2534aa.html 
 
-### 4. What will be challenging about learning something new?
 
-Taking a completely new model of analyzing survival data is particularly difficult since the mathematical derivations and notations are also very varied from what we have seen in class. Although, I do remember some of the ideas behind parametric functions, their applications to statistical models are much more challenging than I have expected. Therefore, it will require me a lot of time and extensive research to be able to understand and learn how to apply this model to our data and other instances of survival analysis.
+
+
 
 ### Explanation of the Theory Behind Schoenfeld Residuals
 
@@ -473,4 +518,5 @@ Using the best determined Cox PH model for our data, we can look at the Schoenfe
 
 Using the ggcoxdiagnostics() function we can provide another graphic representation of the residual distribution in regards to the covariates with time. Here, we also see that there's no particular pattern of the residuals around the line of fit, therefore again, we can state that the PH assumption has been met.
 
-
+References:
+1. http://www.ukm.my/jsm/pdf_files/SM-PDF-46-3-2017/15%20Aditif%20Aalen.pdf 
