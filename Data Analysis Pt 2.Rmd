@@ -391,7 +391,7 @@ library(powerSurvEpi)
 ```
 
 ```{r}
-
+### POWER ANALYSIS AND SIMULATION ###
 set.seed(1234)
 n.reps <- 100
 simoutput2 <- c()
