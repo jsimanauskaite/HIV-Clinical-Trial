@@ -499,14 +499,26 @@ The y-axis of the Schoenfeld residuals graph can be interpreted as the log of th
 
 Schoenfeld Residuals applied to our best Cox PH model for AIDS data where, we have an additive model of explanatory variables: baseline CD4 count, iv drug use history, and karnofsky performance scale score:
 ```{r}
-cph_r10 <- coxph(Surv(time,censor)~.-priorzdv -id -hemophil -raceth -time_d -strat2 
-                 -sex -txgrp -age -tx -censor_d, data = aids)
-cph_r10
-zph_r10 <- cox.zph(cph_r10)
-zph_r10
-ggcoxzph(zph_r10)
-ggcoxdiagnostics(cph_r10, type="schoenfeld")
+cph_tx <- coxph(Surv(time,censor)~ tx, data = aids)
+cph_tx
+zph_tx <- cox.zph(cph_tx)
+zph_tx
+ggcoxzph(zph_tx, point.size = 1, point.shape = 19)
+ggcoxdiagnostics(cph_tx, type="schoenfeld")
 
+cph_cd4 <- coxph(Surv(time,censor)~ cd4, data = aids)
+cph_cd4
+zph_cd4 <- cox.zph(cph_cd4)
+zph_cd4
+ggcoxzph(zph_cd4, point.size = 1, point.shape = 10)
+ggcoxdiagnostics(cph_cd4, type="schoenfeld")
+
+cph_k <- coxph(Surv(time,censor)~ karnof, data = aids)
+cph_k
+zph_k <- cox.zph(cph_k)
+zph_k
+ggcoxzph(zph_k, point.size = 1, point.shape = 10)
+ggcoxdiagnostics(cph_k, type="schoenfeld")
 ```
 
 Using the best determined Cox PH model for our data, we can look at the Schoenfeld residuals to determine if the PH assumption is met. Via the function "ggcoxzph()"", which produces, for each covariate, graphs of the scaled Schoenfeld residuals against the transformed time. Here, the solid line is a smoothing spline fit to the plot, with the dashed lines representing a +/- 2-standard-error. from these graphs, we don't see any patterns or significance of the residual fit regarding the graphs of the covariates with time. Therefore, the assumption of proportional hazards seems to be supported for the covariates: baseline CD4 count, iv drug use history, and karnofsky performance scale score.
