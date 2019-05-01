@@ -8,8 +8,8 @@ output:
     highlight: tango
     toc: true
     toc_depth: 6
-    fig_width: 7
-    fig_height: 6
+    fig_width: 10
+    fig_height: 10
     fig_crop: false
   html_document: default
 ---
@@ -50,6 +50,33 @@ summary(aids)
 ```
 # Data-Set Analysis
 The data set contains a sample size equal to 851 participants and 16 different variables. Out of these participants 782 were considered as uncensored data point, which indicates that these patients survived through the course of the study without diagnosis of AIDS and/or death. 69 were found to be censored meaning that either there was an occurence of death or AIDS diagnosis, out of which it is known that 20 patients died throughout the course of the study.
+
+
+```{r}
+#Survival Analysis 
+#mutation of age
+aids <- read.csv( "http://pages.pomona.edu/~jsh04747/courses/math150/AIDSdata.csv")
+aids <- aids %>% 
+  mutate(age = ifelse(age <= 20, "under20", 
+                             ifelse(age <=30, "20-30",
+                                    ifelse(age <= 40, "30-40",
+                                           ifelse(age <=50, "40-50",
+                                                 ifelse(age <=60, "50-60",
+                                                        ifelse(age <=70, "60-70", 
+                                                               "over70"))))))) %>%
+  mutate(age = factor(age,
+                       levels = c("under20", "20-30", "30-40","40-50", "50-60","60-70","over70")),  
+         sex = ifelse(sex == 2, "male","female"))
+
+aids <- aids %>% 
+  mutate(cd4 = ifelse(cd4 <=50, "0-50", 
+                             ifelse(cd4 <=100, "50-100",
+                                    ifelse(cd4 <= 150, "100-150",
+                                           ifelse(cd4 <=200, "150-200",
+                                                 ifelse(cd4 <=250, "200-250",
+                                                        ifelse(cd4 <=300, "300-350", "350+"))))))) 
+```
+Since there are many values of the explanatory variable *age* in the original data, we've decided to mutate the variable into age categories from under 20 to over 70 in increments of 10 years. Similar modifications have been made to the baseline *CD4* count, just in incrimennts of 50 up until 350+. Furthermore, we changed the labeling and representation of *sex* into "male" and "female" instead of "1" and "2" in the data.
 
 ```{r}
 library(plotrix)
@@ -190,31 +217,6 @@ survdiff(Surv(time,censor)~karnof, data = aids, rho=1)
 ```
 
 ```{r}
-#Survival Analysis 
-#mutation of age
-aids <- read.csv( "http://pages.pomona.edu/~jsh04747/courses/math150/AIDSdata.csv")
-aids <- aids %>% 
-  mutate(age = ifelse(age <= 20, "under20", 
-                             ifelse(age <=30, "20-30",
-                                    ifelse(age <= 40, "30-40",
-                                           ifelse(age <=50, "40-50",
-                                                 ifelse(age <=60, "50-60",
-                                                        ifelse(age <=70, "60-70", 
-                                                               "over70"))))))) %>%
-  mutate(age = factor(age,
-                       levels = c("under20", "20-30", "30-40","40-50", "50-60","60-70","over70")),  
-         sex = ifelse(sex == 2, "male","female"))
-
-aids <- aids %>% 
-  mutate(cd4 = ifelse(cd4 <=50, "0-50", 
-                             ifelse(cd4 <=100, "50-100",
-                                    ifelse(cd4 <= 150, "100-150",
-                                           ifelse(cd4 <=200, "150-200",
-                                                 ifelse(cd4 <=250, "200-250",
-                                                        ifelse(cd4 <=300, "300-350", "350+"))))))) 
-```
-Since there are many values of the explanatory variable *age* in the original data, we've decided to mutate the variable into age categories from under 20 to over 70 in increments of 10 years. Similar modifications have been made to the baseline *CD4* count, just in incrimennts of 50 up until 350+. Furthermore, we changed the labeling and representation of *sex* into "male" and "female" instead of "1" and "2" in the data.
-```{r}
 library(survival)
 library (survminer)
 library(ggplot2)
@@ -304,8 +306,10 @@ s7 <- 2*(cp_red6$loglik[2]-cp_red7$loglik[2])
 To better understand how nmuch the model fit changes with each different explanatory variable, we can use the graphical representation of the Aalen additive regression model. The Aalen model allows for time-varying covariate effects, while the Cox model allows only a common time-dependence through the baseline. In the Aalen model, we have the weighted comparisons of the crude estimate of the hazard rate of each group as compared to a baseline group, which here is defined as the estimate. As we can see, the selected explanatory variables in our model all have an inverse coefficient correlation with the baseline interceipt. The slope of an estimated cumulative regression function is positive when covariate increases and this fact correspond to an increasing hazard rate. On the other hand, if the slope is negative while the covariate increases, then this fact points to a decreasing hazard rate.
 ```{r}
 library(ggfortify)
+aids <- read.csv( "http://pages.pomona.edu/~jsh04747/courses/math150/AIDSdata.csv")
 
-aa_fit <-aareg(Surv(time, censor) ~ cd4 + karnof+ priorzdv +hemophil +raceth +sex +tx +ivdrug, data = aids)
+aa_fit <-aareg(Surv(time, censor) ~ cd4 + karnof+ priorzdv +hemophil +raceth +sex +tx +ivdrug,
+               data = aids)
 
 autoplot(aa_fit,xlab="Coefficient", ylab="Time") + labs(x = "time", y = "coefficient")
 
