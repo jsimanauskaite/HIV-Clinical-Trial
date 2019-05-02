@@ -298,6 +298,14 @@ cp_red7
 s7 <- 2*(cp_red6$loglik[2]-cp_red7$loglik[2])
 1-pchisq(s7,1)
 
+#reduced model 8
+cp_red8<- coxph(Surv(time_d,censor_d)~.-time -censor -txgrp -ivdrug -priorzdv -raceth -strat2 -hemophil -sex -id -age, data=aids)
+cp_red8$loglik
+cp_red8
+
+#likelihood ratio
+s8 <- 2*(cp_red7$loglik[2]-cp_red8$loglik[2])
+1-pchisq(s8,1)
 ```
 
 
