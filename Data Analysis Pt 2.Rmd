@@ -41,6 +41,8 @@ library(plyr)
 library(survival)
 library(survminer)
 library(coxed)
+library(ggplot2)
+library(broom)
 
 
 aids <- read.csv( "http://pages.pomona.edu/~jsh04747/courses/math150/AIDSdata.csv")
@@ -174,6 +176,7 @@ ggsurvplot(fit,data = aids,conf.int = FALSE) + ggtitle("Overall")
 ```
 
 The following graph is a representation of the Kaplan-Meier survival probability based on the treatment indicator. In this case *tx=0* was the control group and *tx=1* the treatment group that was gived IDV. Already, we can see a tred in the graph that the control group shows a lower survival probability with time. According to the log-rank test, we see that the p-value for the test statistic is equal to 0.002 (<0.05), thus we can reject the null hypothesis that the two population survival functions are the same, and the alternative is accepted, which says that the survival curves are different. The Wilcoxon test also provides us with a small p-value of 0.002 , which again rejects the null and goes in agreement with our primary conclusion.
+
 ```{r}
 fit1 <- survfit(Surv(time,censor)~tx, data = aids)
 ggsurvplot(fit1,data = aids,conf.int = FALSE) + ggtitle("Treatment Indicator")
@@ -194,6 +197,7 @@ survdiff(Surv(time,censor)~age, data = aids, rho=0)
 survdiff(Surv(time,censor)~age, data = aids, rho=1)
 ```
 The following graph is a representation of the Kaplan-Meier survival probability based on the Baseline CD4. Due to the close proximity of the curves it's harder to see the significance of the differences. However, according to the log-rank test, we see that the p-value for the test statistic is equal to 5e-07  (<0.05), thus we can reject the null hypothesis, The Wilcoxon test  again provides us with a small p-value of 5e-07, which again rejects the null and goes in agreement with our primary conclusion that the curves are significantly different.
+
 ```{r}
 fit3 <- survfit(Surv(time,censor)~cd4, data = aids)
 ggsurvplot(fit3,data = aids,conf.int = FALSE) + ggtitle("Baseline CD4 Count")
@@ -203,7 +207,9 @@ survdiff(Surv(time,censor)~cd4, data = aids, rho=0)
 'Wilcoxon'
 survdiff(Surv(time,censor)~cd4, data = aids, rho=1)
 ```
-The final explanatory variable we're investigating as a part of our model is teh Karnofsky Performance Scale. The Kaplan-Meier curves for this variable present a higher amplitude of distributions across the survival scale. The p-values of both log-rank and the Wilcoxon Test again present with the same significant p-value of  5e-10  (<0.05), thus we can reject the null hypothesis of no difference between the curves and consider this a significant variable in the construction of our model.
+
+The final explanatory variable we're investigating as a part of our model is the Karnofsky Performance Scale. The Kaplan-Meier curves for this variable present a higher amplitude of distributions across the survival scale. The p-values of both log-rank and the Wilcoxon Test again present with the same significant p-value of  5e-10  (<0.05), thus we can reject the null hypothesis of no difference between the curves and consider this a significant variable in the construction of our model.
+
 ```{r}
 aids_fit_time_k <- survfit(Surv(time, censor) ~karnof  , data=aids)
 ggsurvplot(aids_fit_time_k, data=aids,  conf.int = TRUE) +
@@ -216,21 +222,17 @@ survdiff(Surv(time,censor)~karnof, data = aids, rho=1)
 
 ```
 
-```{r}
-library(survival)
-library (survminer)
-library(ggplot2)
-library(broom)
-```
-
+To decide what variables to use in our COX PH model, we can use backwards selection to determine what explanatory variables are most important to the model, along with the likelihood ratio test to compare differences in our models. Using time_d and censor_d as the response variables, we begin with the full model that includes the rest of the
+variables (minus time and censor) as the explanatory variables. We remove the variable with the highest $p$ value first and create a new model without this variable. Using the likelihood ratio test between the two models, we then determine whether or not the variable added significance to the model. We continued this process until we arrived at the best model which uses *tx*, *karnof*, *cd4* and *age* as the explanatory variables.
 
 ```{r}
 ### COX PH MODEL USING BACKWARDS SELECTION ####
+aids <- read.csv( "http://pages.pomona.edu/~jsh04747/courses/math150/AIDSdata.csv")
 
 #full model
 cp_full<- coxph(Surv(time_d,censor_d)~.-time -censor, data = aids)
 cp_full$loglik
-#cp_full
+cp_full
 
 #reduced model 1
 cp_red1<- coxph(Surv(time_d,censor_d)~.-time -censor -txgrp -ivdrug, data=aids)
@@ -299,19 +301,19 @@ s7 <- 2*(cp_red6$loglik[2]-cp_red7$loglik[2])
 1-pchisq(s7,1)
 
 #reduced model 8
-cp_red8<- coxph(Surv(time_d,censor_d)~.-time -censor -txgrp -ivdrug -priorzdv -raceth -strat2 -hemophil -sex -id -age, data=aids)
+cp_red8<- coxph(Surv(time_d,censor_d)~.-time -censor -txgrp -ivdrug -priorzdv -raceth -strat2 -hemophil -sex -id, data=aids)
 cp_red8$loglik
 cp_red8
+
 
 #likelihood ratio
 s8 <- 2*(cp_red7$loglik[2]-cp_red8$loglik[2])
 1-pchisq(s8,1)
+
 ```
 
+To better understand how much the model fit changes with each different explanatory variable, we can use the graphical representation of the Aalen additive regression model. The Aalen model allows for time-varying covariate effects, while the Cox model allows only a common time-dependence through the baseline. In the Aalen model, we have the weighted comparisons of the crude estimate of the hazard rate of each group as compared to a baseline group, which here is defined as the estimate. As we can see, the selected explanatory variables in our model all have an inverse coefficient correlation with the baseline interceipt. The slope of an estimated cumulative regression function is positive when covariate increases and this fact correspond to an increasing hazard rate. On the other hand, if the slope is negative while the covariate increases, then this fact points to a decreasing hazard rate.
 
-
-
-To better understand how nmuch the model fit changes with each different explanatory variable, we can use the graphical representation of the Aalen additive regression model. The Aalen model allows for time-varying covariate effects, while the Cox model allows only a common time-dependence through the baseline. In the Aalen model, we have the weighted comparisons of the crude estimate of the hazard rate of each group as compared to a baseline group, which here is defined as the estimate. As we can see, the selected explanatory variables in our model all have an inverse coefficient correlation with the baseline interceipt. The slope of an estimated cumulative regression function is positive when covariate increases and this fact correspond to an increasing hazard rate. On the other hand, if the slope is negative while the covariate increases, then this fact points to a decreasing hazard rate.
 ```{r}
 library(ggfortify)
 aids <- read.csv( "http://pages.pomona.edu/~jsh04747/courses/math150/AIDSdata.csv")
@@ -334,6 +336,8 @@ The plots show how the effects of the covariates change over time.
 
 
 #Patricia's "Something New"
+
+
 I will be doing a power analysis by simulating survival analysis curves
 
 ### 1. What is the topic?
@@ -370,7 +374,7 @@ set.seed(1234)
 n.reps <- 100
 simoutput <- c()
 for(i in 1:n.reps){
-  simdata <- sim.survdata(N=851, T=100, num.data.frames=1, censor= 0.9764,xvars=4, mu=m, sd=s, beta = c(-0.867409, -0.071620, -0.016659, 0.073674))
+  simdata <- sim.survdata(N=851, T=362, num.data.frames=1, censor= 0.9764,xvars=4, mu=m, sd=s, beta = c(-0.867409, -0.071620, -0.016659, 0.073674))
   model <- coxph(Surv(y, failed) ~ X1 + X2 + X3 +X4, data = simdata$data)
   simoutput <- rbind(simoutput, cbind(rep = rep(i, 4), model %>% tidy()))
   
@@ -392,11 +396,18 @@ simoutput%>%dplyr::filter(term=="X3")%>%dplyr::summarize(sum(p.value<0.05))
 simoutput%>%dplyr::filter(term=="X4")%>%dplyr::summarize(sum(p.value<0.05))
 
 
+str(simdata$data)
 m <-c(mean(aids$tx), mean(aids$karnof), mean(aids$cd4), mean(aids$age))
 s <-c(sd(aids$tx), sd(aids$karnof), sd(aids$cd4), sd(aids$age))
 
+m
+s
 simoutput%>%dplyr::filter(term=="X4")%>%dplyr::select(estimate)%>%hist(breaks=200)
 
+
+temp <- sim.survdata(N=851, num.data.frames = 1, xvars = 4, beta = c(-0.867409, -0.071620, -0.016659, 0.073674), censor = 0.9764, mu=m,sd=s)
+str(temp$data)
+hist(temp$data$X3)
 library(FDRsampsize)
 library(powerSurvEpi)
 ```
@@ -408,8 +419,8 @@ n.reps <- 100
 simoutput2 <- c()
 for(i in 1:n.reps){
   simdata2 <- sim.survdata(N=851, T=362, num.data.frames=1, censor= 0.2, 
-                          X=aids[,c(6,13)], #,13,14,16)] ,
-                          beta = c(-0.867409, -0.071620))#, -0.016659, 0.073674))
+                          X=aids[,c(6,13,14,16)] ,
+                          beta = c(-0.867409, -0.071620, -0.016659, 0.073674))
   model <- coxph(Surv(y, failed) ~ tx + karnof, data = simdata2$data)
   simoutput2 <- rbind(simoutput2, cbind(rep = rep(i, 2), model %>% tidy()))
   
@@ -424,7 +435,14 @@ simoutput2%>%dplyr::filter(term=="cd4")%>%dplyr::summarize(sum(p.value<0.05))
 simoutput2%>%dplyr::filter(term=="age")%>%dplyr::summarize(sum(p.value<0.05))
 
 
+
+str(simdata2$data)
 ```
+
+
+
+
+
 
 # Juste's "Something New": The Schoenfeld Residuals for the Cox PH model
 
