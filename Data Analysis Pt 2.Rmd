@@ -32,7 +32,7 @@ Follow ups were made at weeks 4,8, and 16 and every eight weeks afterwards. CD4 
 The statistical analysis methods used to interpret results were Kaplan-Meier estimates, log-rank tests, and proportional hazards models. The p-values, estimates of treatment differences and 95% confidence intervals were not adjusted for repeated analysis.
 
 The data and results have been reviewed again in 2019 and have been analyzed via statistic methhods such as Cox Proportional Hazards test, Kaplan-Meier estimates, Aalen model, Power analysis, and Schoenfeld residuals.
-```{r global_options, include=TRUE, message=FALSE, warning=FALSE}
+```{r global_options, include=TRUE, message=FALSE, warning=FALSE, echo=FALSE}
 knitr::opts_chunk$set(message=FALSE, warning=FALSE, fig.height=3, fig.width=5, 
                       fig.align="center")
 library(tidyverse)
@@ -221,7 +221,7 @@ survdiff(Surv(time,censor)~karnof, data = aids, rho=1)
 
 ```
 
-To decide what variables to use in our COX PH model, we can use backwards selection to determine what explanatory variables are most important to the model, along with the likelihood ratio test to compare differences in our models. Using time_d and censor_d as the response variables, we begin with the full model that includes the rest of the
+To decide what variables to use in our Cox PH model, we can use backwards selection to determine what explanatory variables are most important to the model, along with the likelihood ratio test to compare differences in our models. Using time_d and censor_d as the response variables, we begin with the full model that includes the rest of the
 variables (minus time and censor) as the explanatory variables. We remove the variable with the highest $p$ value first and create a new model without this variable. Using the likelihood ratio test between the two models, we then determine whether or not the variable added significance to the model. We continued this process until we arrived at the best model which uses *tx*, *karnof*, *cd4* and *age* as the explanatory variables.
 
 ```{r}
@@ -244,7 +244,8 @@ s1 <- 2*(cp_full$loglik[2]-cp_red1$loglik[2])
 
 
 #reduced model 2
-cp_red2<- coxph(Surv(time_d,censor_d)~.-time -censor -txgrp -ivdrug -priorzdv, data=aids)
+cp_red2<- coxph(Surv(time_d,censor_d)~.-time -censor -txgrp -ivdrug -priorzdv,
+                data=aids)
 cp_red2$loglik
 #cp_red2
 
@@ -254,7 +255,8 @@ s2 <- 2*(cp_red1$loglik[2]-cp_red2$loglik[2])
 
 
 #reduced model 3
-cp_red3<- coxph(Surv(time_d,censor_d)~.-time -censor -txgrp -ivdrug -priorzdv -raceth, data=aids)
+cp_red3<- coxph(Surv(time_d,censor_d)~.-time -censor -txgrp -ivdrug -priorzdv
+                -raceth, data=aids)
 cp_red3$loglik
 #cp_red3
 
@@ -264,7 +266,8 @@ s3 <- 2*(cp_red2$loglik[2]-cp_red3$loglik[2])
 
 
 #reduced model 4
-cp_red4<- coxph(Surv(time_d,censor_d)~.-time -censor -txgrp -ivdrug -priorzdv -raceth -strat2, data=aids)
+cp_red4<- coxph(Surv(time_d,censor_d)~.-time -censor -txgrp -ivdrug -priorzdv
+                -raceth -strat2, data=aids)
 cp_red4$loglik
 #cp_red4
 
@@ -273,7 +276,8 @@ s4 <- 2*(cp_red3$loglik[2]-cp_red4$loglik[2])
 1-pchisq(s4,1)
 
 #reduced model 5
-cp_red5<- coxph(Surv(time_d,censor_d)~.-time -censor -txgrp -ivdrug -priorzdv -raceth -strat2 -hemophil, data=aids)
+cp_red5<- coxph(Surv(time_d,censor_d)~.-time -censor -txgrp -ivdrug -priorzdv
+                -raceth -strat2 -hemophil, data=aids)
 cp_red5$loglik
 #cp_red5
 
@@ -282,7 +286,8 @@ s5 <- 2*(cp_red4$loglik[2]-cp_red5$loglik[2])
 1-pchisq(s5,1)
 
 #reduced model 6
-cp_red6<- coxph(Surv(time_d,censor_d)~.-time -censor -txgrp -ivdrug -priorzdv -raceth -strat2 -hemophil -sex, data=aids)
+cp_red6<- coxph(Surv(time_d,censor_d)~.-time -censor -txgrp -ivdrug -priorzdv
+                -raceth -strat2 -hemophil -sex, data=aids)
 cp_red6$loglik
 #cp_red6
 
@@ -291,7 +296,8 @@ s6 <- 2*(cp_red5$loglik[2]-cp_red6$loglik[2])
 1-pchisq(s6,1)
 
 #reduced model 7
-cp_red7<- coxph(Surv(time_d,censor_d)~.-time -censor -txgrp -ivdrug -priorzdv -raceth -strat2 -hemophil -sex -id, data=aids)
+cp_red7<- coxph(Surv(time_d,censor_d)~.-time -censor -txgrp -ivdrug -priorzdv
+                -raceth -strat2 -hemophil -sex -id, data=aids)
 cp_red7$loglik
 cp_red7
 
@@ -300,7 +306,8 @@ s7 <- 2*(cp_red6$loglik[2]-cp_red7$loglik[2])
 1-pchisq(s7,1)
 
 #reduced model 8
-cp_red8<- coxph(Surv(time_d,censor_d)~.-time -censor -txgrp -ivdrug -priorzdv -raceth -strat2 -hemophil -sex -id, data=aids)
+cp_red8<- coxph(Surv(time_d,censor_d)~.-time -censor -txgrp -ivdrug -priorzdv
+                -raceth -strat2 -hemophil -sex -id, data=aids)
 cp_red8$loglik
 cp_red8
 
@@ -340,17 +347,10 @@ Overall power analysis is important when conducting experiments because without 
 
 In relation to survival analysis, we can simulate survival data and set it as the alternative hypothesis. Using power analysis, we can then determine how often we would be expected to correctly reject our null hypothesis. The code below simulates survival data using the beta coefficients from our Cox PH model. The Cox PH model showed us that *tx*, *karnof*, *cd4*, and *age* were the most significant explanatory variables to predict time until death. Using their respective beta coefficients in the simulation, we can calculate the probability we would reject the null hypothesis given that the alternative hypothesis is the data we have at hand.
 
-
-a). https://cran.r-project.org/web/packages/coxed/vignettes/simulating_survival_data.html
-b). http://www.icssc.org/documents/advbiosgoa/tab%2026.00_survss.pdf
-
-
 ### Power Analysis code and simulation
 ```{r}
-#ggsurvplot(survfit(Surv(y,failed) ~ X1 + X2 + X3, data = simdata$data))
-#model <- coxph(Surv(y, failed) ~ X1 + X2 + X3, data = simdata$data)
-#model %>% tidy()
 
+#Simulating survival data using coefficients from Cox PH model
 set.seed(1234)
 n.reps <- 100
 simoutput <- c()
@@ -362,17 +362,16 @@ for(i in 1:n.reps){
 }
 
 
-#sum(which(simoutput$p.value < 0.05))
-sum(simoutput$p.value < 0.05)
-
-#simoutput%>%filter(term=="X1")%>%summarize(sum(p.value<0.05))
-
+#Power for the first variable: tx
 simoutput%>%dplyr::filter(term=="X1")%>%dplyr::summarize(sum(p.value<0.05))
 
+#Power for the second variable: karnof
 simoutput%>%dplyr::filter(term=="X2")%>%dplyr::summarize(sum(p.value<0.05))
 
+#Power for the third variable: cd4
 simoutput%>%dplyr::filter(term=="X3")%>%dplyr::summarize(sum(p.value<0.05))
 
+#Power for the fourth variable: age
 simoutput%>%dplyr::filter(term=="X4")%>%dplyr::summarize(sum(p.value<0.05))
 
 
@@ -384,10 +383,12 @@ m
 s
 simoutput%>%dplyr::filter(term=="X4")%>%dplyr::select(estimate)%>%hist(breaks=200)
 
-str(temp$data)
-hist(temp$data$X3)
-
 ```
+
+References Used:
+
+1. https://cran.r-project.org/web/packages/coxed/vignettes/simulating_survival_data.html
+2. http://www.icssc.org/documents/advbiosgoa/tab%2026.00_survss.pdf
 
 
 # Juste's "Something New": The Schoenfeld Residuals for the Cox PH model
