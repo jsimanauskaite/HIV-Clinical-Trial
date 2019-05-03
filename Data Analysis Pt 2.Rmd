@@ -50,7 +50,6 @@ library(ggfortify)
 
 aids <- read.csv( "http://pages.pomona.edu/~jsh04747/courses/math150/AIDSdata.csv")
 dim(aids)
-summary(aids)
 
 ```
 # Data-Set Analysis
@@ -142,23 +141,23 @@ The distribution of race/ethnicity shows that the greatest number of participant
 never<-sum(aids$ivdrug==1)
 cur<-sum(aids$ivdrug==2)
 prev<-sum(aids$ivdrug==3)
-slices <- c(never,cur,prev) 
-lbls <- c("Never", "Currently", "Previously")
-pct <- round(slices/sum(slices)*100)
-lbls <- paste(lbls, pct) 
-lbls <- paste(lbls,"%",sep="") 
-df = data.frame(slices = slices,labels =  lbls)
-ivplot<- ggplot(df,aes(x = factor(1),y=slices,  fill = labels)) +
+slices3 <- c(never,cur,prev) 
+lbls3 <- c("Never", "Currently", "Previously")
+pct3 <- round(slices3/sum(slices3)*100)
+lbls3 <- paste(lbls3, pct3) 
+lbls3 <- paste(lbls3,"%",sep="") 
+df3 = data.frame(slices = slices3,labels =  lbls3)
+ivplot<- ggplot(df3,aes(x = factor(1),y=slices3,  fill = labels)) +
          geom_bar(stat="identity", width = 1)+
         coord_polar(theta = "y")+
         theme(axis.line = element_blank(),
           axis.text = element_blank(),
           axis.ticks = element_blank(),
           axis.title = element_blank())
-print(ethplot + ggtitle("IV Drug Use History")+ 
-        scale_fill_manual(values=c("#56ADE3", "#12358A", 
-                                   "#F41288", "#F7BE6D", "#F26569",
-                                   "#A65674"))+ 
+print(ivplot + ggtitle("IV Drug Use History")+ 
+        scale_fill_manual(values=c( "#555111",
+                                    "#F26419", 
+                                   "#125500")) +
         labs(x = NULL, y = NULL, fill = NULL))
 
 ```
@@ -188,7 +187,7 @@ survdiff(Surv(time,censor)~tx, data = aids, rho=0)
 'Wilcoxon'
 survdiff(Surv(time,censor)~tx, data = aids, rho=1)
 ```
-The Kaplan-Meier curves for survival probability based on *age* as an explanatory variable, with ether a grouped or ungrouped methods. If we leave the variable unchanged (ungrouped), according to log-rank and Wilcoxon tests, we get p-values of 0.008 and 0.009 respectively, (<0.05), thus rejecting the null of no difference, therefore it is considered a signifcant variable in the data set. However, with grouping of the age variable, we achieve a more consise, yet a nonsignificant Kaplan-Meier distribution, where the p-values in log-rank and Wilcoxon tests are equal to 0.3, therefore, failing to reject the null of no difference, indicating thhat it has no significant effect on the overall survival probability. 
+The Kaplan-Meier curves for survival probability based on *age* as an explanatory variable, with ether a grouped or ungrouped methods. If we leave the variable unchanged (ungrouped), according to log-rank and Wilcoxon tests, we get p-values of 0.008 and 0.009 respectively, (<0.05), thus rejecting the null of no difference, therefore it is considered a signifcant variable in the data set. (*This graph and resulting values are not shown due to the extensiveness of the data output*) However, with grouping of the age variable, we achieve a more consise, yet a nonsignificant Kaplan-Meier distribution, where the p-values in log-rank and Wilcoxon tests are equal to 0.3, therefore, failing to reject the null of no difference, indicating thhat it has no significant effect on the overall survival probability. 
 ```{r}
 fit2 <- survfit(Surv(time,censor)~age, data = aids)
 ggsurvplot(fit2,data = aids,conf.int = FALSE) + ggtitle("Age")
@@ -198,14 +197,7 @@ survdiff(Surv(time,censor)~age, data = aids, rho=0)
 'Wilcoxon'
 survdiff(Surv(time,censor)~age, data = aids, rho=1)
 
-aids <- read.csv( "http://pages.pomona.edu/~jsh04747/courses/math150/AIDSdata.csv")
-fit2 <- survfit(Surv(time,censor)~age, data = aids)
-ggsurvplot(fit2,data = aids,conf.int = FALSE) + ggtitle("Age")
 
-'Log-Rank'
-survdiff(Surv(time,censor)~age, data = aids, rho=0)
-'Wilcoxon'
-survdiff(Surv(time,censor)~age, data = aids, rho=1)
 ```
 The following graph is a representation of the Kaplan-Meier survival probability based on the Baseline CD4. Due to the close proximity of the curves it's harder to see the significance of the differences. However, according to the log-rank test, we see that the p-value for the test statistic is equal to 5e-07  (<0.05), thus we can reject the null hypothesis, The Wilcoxon test  again provides us with a small p-value of 5e-07, which again rejects the null and goes in agreement with our primary conclusion that the curves are significantly different.
 
@@ -234,11 +226,7 @@ survdiff(Surv(time,censor)~karnof, data = aids, rho=1)
 
 ```
 
-<<<<<<< HEAD
 To decide what variables to use in our Cox proportional hazards (PH) model, we can use backwards selection to determine what explanatory variables are most important to the model, along with the likelihood ratio test to compare differences in our models. Using *time_d* and *censor_d* as the response variables, we begin with the full model that includes the rest of the variables (minus time and censor) as the explanatory variables. We remove the variable with the highest $p$ value first and create a new model without this variable. Using the likelihood ratio test between the two models, we then determine whether or not the variable added significance to the model. We continued this process until we arrived at the best model which uses *tx*, *karnof*, *cd4* and *age* as the explanatory variables.
-=======
-To decide what variables to use in our Cox proportional hazards (PH) model, we can use backwards selection to determine what explanatory variables are most important to the model, along with the likelihood ratio test to compare differences in our models. Using time_d and censor_d as the response variables, we begin with the full model that includes the rest of the variables (minus time and censor) as the explanatory variables. We remove the variable with the highest $p$ value first and create a new model without this variable. Using the likelihood ratio test between the two models, we then determine whether or not the variable added significance to the model. We continued this process until we arrived at the best model which uses *tx*, *karnof*, and *cd4*  as the explanatory variables.
->>>>>>> 8b3feecfe44c7f25d2cb80925171f82dbfebaa8f
 
 ```{r}
 ### COX PH MODEL USING BACKWARDS SELECTION ####
@@ -463,41 +451,48 @@ Following the calculations, the residuals are plotted against time in order to t
 
 ***
 
-* The 
+*Interpretation of Schoenfeld Residuals: theoretical & graphical (R graphs and the p-values presented.)*
 
-*Interpretation of Schoenfeld Residuals: theoretical & graphical (R graphs and the p-values presented.)c*
+-- The Schoenfeld residuals are used to examine the model fit and detect outlying covariate values. Shoenfeld residuals represent the difference between the observed covariate and the expected given the risk set at that time. They should be flat, centered about zero in order for the Proportional Hazards assumption to be true. --
 
+-- Furthermore, the Schoenfeld residuals are independent of time. A plot that shows a non-random pattern against time is evidence of violation of the PH assumption in regards to time because Schienfeld individuals should be independent of them. The PH assumption is supported when there's a non-significant relationship between residuals and time. --
 
-The y-axis of the Schoenfeld residuals graph can be interpreted as the log of the hazard ratio for the explanatory variable-- the coefficient in Cox’s model if it were allow to vary over time. If the graph is flat, then the PH assumption is adequate. Furthermore, the Schoenfeld residuals are independent of time. A plot that shows a non-random pattern against time is evidence of violation of the PH assumption. The PH assumption is supported when there's a non-significant relationship between residuals and time.
 ### HIV Data Cox PH model analysis using Schoenfeld Residuals
 
-Schoenfeld Residuals applied to our best Cox PH model for AIDS data where, we have an additive model of explanatory variables: baseline CD4 count, iv drug use history, and karnofsky performance scale score:
+Schoenfeld Residuals applied to our best Cox PH model for AIDS data where, we have an additive model of explanatory variables: baseline CD4 count, age,treatment group, and karnofsky performance scale score:
+
+The *cox.zph()* function provides a Goodness-of-Fit (GOF) test, which tests the correlation between Schoenfeld resuduals and survival time. Here, taking with an alpha level of $\alpha=0.05$ the p-value below this would rejuct the null of independence, thus indicating that the residuals are infact dependent on time and thus the PH assumption is not satisfied. If the p-value is greater than $\alpha$, the null of independence is accepted and thus the PH assumption is met. 
+
+A graphical represenation is achieved using either *ggcoxzph()* or *ggcoxdiagnostics()* functions, that overall should show no pattern in the graphs in order to indicate a PH assumption. In the *ggcoxzph()* function, the solid line is a smoothing spline fit to the plot, with the dashed lines representing a +/- 2-standard-error. Whereas, in *ggcoxdiagnostics()* function graph, the dashed blue line represents the fit to the plot, via red dashed line representing the y=0 point of reference and the grey area aroud the blue line representing  thhe +/- 2-standard-error.
 ```{r}
 cph_tx <- coxph(Surv(time,censor)~ tx, data = aids)
-cph_tx
 zph_tx <- cox.zph(cph_tx)
 zph_tx
 ggcoxzph(zph_tx, point.size = 1, point.shape = 19)
 ggcoxdiagnostics(cph_tx, type="schoenfeld")
 
 cph_cd4 <- coxph(Surv(time,censor)~ cd4, data = aids)
-cph_cd4
 zph_cd4 <- cox.zph(cph_cd4)
 zph_cd4
 ggcoxzph(zph_cd4, point.size = 1, point.shape = 10)
 ggcoxdiagnostics(cph_cd4, type="schoenfeld")
 
 cph_k <- coxph(Surv(time,censor)~ karnof, data = aids)
-cph_k
 zph_k <- cox.zph(cph_k)
 zph_k
 ggcoxzph(zph_k, point.size = 1, point.shape = 10)
 ggcoxdiagnostics(cph_k, type="schoenfeld")
+
+
+cph_a <- coxph(Surv(time,censor)~ age, data = aids)
+zph_a <- cox.zph(cph_a)
+zph_a
+ggcoxzph(zph_a, point.size = 1, point.shape = 10)
+ggcoxdiagnostics(cph_a, type="schoenfeld")
+
 ```
 
-Using the best determined Cox PH model for our data, we can look at the Schoenfeld residuals to determine if the PH assumption is met. Via the function "ggcoxzph()"", which produces, for each covariate, graphs of the scaled Schoenfeld residuals against the transformed time. Here, the solid line is a smoothing spline fit to the plot, with the dashed lines representing a +/- 2-standard-error. from these graphs, we don't see any patterns or significance of the residual fit regarding the graphs of the covariates with time. Therefore, the assumption of proportional hazards seems to be supported for the covariates: baseline CD4 count, iv drug use history, and karnofsky performance scale score.
-
-Using the ggcoxdiagnostics() function we can provide another graphic representation of the residual distribution in regards to the covariates with time. Here, we also see that there's no particular pattern of the residuals around the line of fit, therefore again, we can state that the PH assumption has been met.
+Looking at the output results and the graphs for all the variables selected in our Cox PH model: *tx*, *cd4*,*karnof*, and *age*. The p-values for the variables are 0.544, 0.207, 0.92, and 0.161 respectively. All of these values are greater than the $\alpha=0.05$, which indicates that the proportional hazards assumption is met for all variables involved in the model and that the Schoenfeld residuals of the explanatory variables are independent of time.
 
 
 # Discussion
