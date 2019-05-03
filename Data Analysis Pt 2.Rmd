@@ -221,8 +221,7 @@ survdiff(Surv(time,censor)~karnof, data = aids, rho=1)
 
 ```
 
-To decide what variables to use in our Cox PH model, we can use backwards selection to determine what explanatory variables are most important to the model, along with the likelihood ratio test to compare differences in our models. Using time_d and censor_d as the response variables, we begin with the full model that includes the rest of the
-variables (minus time and censor) as the explanatory variables. We remove the variable with the highest $p$ value first and create a new model without this variable. Using the likelihood ratio test between the two models, we then determine whether or not the variable added significance to the model. We continued this process until we arrived at the best model which uses *tx*, *karnof*, *cd4* and *age* as the explanatory variables.
+To decide what variables to use in our Cox proportional hazards (PH) model, we can use backwards selection to determine what explanatory variables are most important to the model, along with the likelihood ratio test to compare differences in our models. Using time_d and censor_d as the response variables, we begin with the full model that includes the rest of the variables (minus time and censor) as the explanatory variables. We remove the variable with the highest $p$ value first and create a new model without this variable. Using the likelihood ratio test between the two models, we then determine whether or not the variable added significance to the model. We continued this process until we arrived at the best model which uses *tx*, *karnof*, *cd4* and *age* as the explanatory variables.
 
 ```{r}
 ### COX PH MODEL USING BACKWARDS SELECTION ####
@@ -253,7 +252,6 @@ cp_red2$loglik
 s2 <- 2*(cp_red1$loglik[2]-cp_red2$loglik[2])
 1-pchisq(s2,1)
 
-
 #reduced model 3
 cp_red3<- coxph(Surv(time_d,censor_d)~.-time -censor -txgrp -ivdrug -priorzdv
                 -raceth, data=aids)
@@ -263,7 +261,6 @@ cp_red3$loglik
 #likelihood ratio test and p-value
 s3 <- 2*(cp_red2$loglik[2]-cp_red3$loglik[2])
 1-pchisq(s3,1)
-
 
 #reduced model 4
 cp_red4<- coxph(Surv(time_d,censor_d)~.-time -censor -txgrp -ivdrug -priorzdv
@@ -311,7 +308,6 @@ cp_red8<- coxph(Surv(time_d,censor_d)~.-time -censor -txgrp -ivdrug -priorzdv
 cp_red8$loglik
 cp_red8
 
-
 #likelihood ratio
 s8 <- 2*(cp_red7$loglik[2]-cp_red8$loglik[2])
 1-pchisq(s8,1)
@@ -349,6 +345,9 @@ In relation to survival analysis, we can simulate survival data and set it as th
 
 ### Power Analysis code and simulation
 ```{r}
+#Mean and standard 
+m <-c(mean(aids$tx), mean(aids$karnof), mean(aids$cd4), mean(aids$age))
+s <-c(sd(aids$tx), sd(aids$karnof), sd(aids$cd4), sd(aids$age))
 
 #Simulating survival data using coefficients from Cox PH model
 set.seed(1234)
@@ -358,7 +357,6 @@ for(i in 1:n.reps){
   simdata <- sim.survdata(N=851, T=362, num.data.frames=1, censor= 0.9764,xvars=4, mu=m, sd=s, beta = c(-0.867409, -0.071620, -0.016659, 0.073674))
   model <- coxph(Surv(y, failed) ~ X1 + X2 + X3 +X4, data = simdata$data)
   simoutput <- rbind(simoutput, cbind(rep = rep(i, 4), model %>% tidy()))
-  
 }
 
 
@@ -375,15 +373,13 @@ simoutput%>%dplyr::filter(term=="X3")%>%dplyr::summarize(sum(p.value<0.05))
 simoutput%>%dplyr::filter(term=="X4")%>%dplyr::summarize(sum(p.value<0.05))
 
 
-str(simdata$data)
-m <-c(mean(aids$tx), mean(aids$karnof), mean(aids$cd4), mean(aids$age))
-s <-c(sd(aids$tx), sd(aids$karnof), sd(aids$cd4), sd(aids$age))
 
-m
-s
-simoutput%>%dplyr::filter(term=="X4")%>%dplyr::select(estimate)%>%hist(breaks=200)
+#simoutput%>%dplyr::filter(term=="X4")%>%dplyr::select(estimate)%>%hist(breaks=200)
 
 ```
+
+From the output above, we can see that the power of each of the variables is not very big. The biggest power obtained is 72%, which comes from the *tx* variable. For the other three variables, power is very small. We can also see that *tx* has the largest beta coefficient and the largest power. For bigger beta coefficients we get a larger power because there is a larger effect size. In general, a power of 80% or more is desirable and given that most of our variables return an insignificant power, we would not reject our null hypothesis most of the time. To increase power, we would either have to increase our sample size, $n$, or increase the effect size.
+
 
 References Used:
 
