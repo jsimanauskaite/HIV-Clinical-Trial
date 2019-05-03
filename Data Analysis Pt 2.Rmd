@@ -221,97 +221,96 @@ survdiff(Surv(time,censor)~karnof, data = aids, rho=1)
 
 ```
 
-To decide what variables to use in our Cox proportional hazards (PH) model, we can use backwards selection to determine what explanatory variables are most important to the model, along with the likelihood ratio test to compare differences in our models. Using time_d and censor_d as the response variables, we begin with the full model that includes the rest of the variables (minus time and censor) as the explanatory variables. We remove the variable with the highest $p$ value first and create a new model without this variable. Using the likelihood ratio test between the two models, we then determine whether or not the variable added significance to the model. We continued this process until we arrived at the best model which uses *tx*, *karnof*, *cd4* and *age* as the explanatory variables.
+To decide what variables to use in our Cox proportional hazards (PH) model, we can use backwards selection to determine what explanatory variables are most important to the model, along with the likelihood ratio test to compare differences in our models. Using time_d and censor_d as the response variables, we begin with the full model that includes the rest of the variables (minus time and censor) as the explanatory variables. We remove the variable with the highest $p$ value first and create a new model without this variable. Using the likelihood ratio test between the two models, we then determine whether or not the variable added significance to the model. We continued this process until we arrived at the best model which uses *tx*, *karnof*, and *cd4*  as the explanatory variables.
 
 ```{r}
 ### COX PH MODEL USING BACKWARDS SELECTION ####
 aids <- read.csv( "http://pages.pomona.edu/~jsh04747/courses/math150/AIDSdata.csv")
 
 #full model
-cp_full<- coxph(Surv(time_d,censor_d)~.-time -censor, data = aids)
+cp_full<- coxph(Surv(time,censor)~.-time_d -censor_d, data = aids)
 cp_full$loglik
 cp_full
 
 #reduced model 1
-cp_red1<- coxph(Surv(time_d,censor_d)~.-time -censor -txgrp -ivdrug, data=aids)
+cp_red1<- coxph(Surv(time,censor)~.-time_d -censor_d -txgrp -ivdrug, data=aids)
 cp_red1$loglik
-#cp_red1
 
 #likelihood ratio test and p-value
 s1 <- 2*(cp_full$loglik[2]-cp_red1$loglik[2])
 1-pchisq(s1,1)
 
-
 #reduced model 2
-cp_red2<- coxph(Surv(time_d,censor_d)~.-time -censor -txgrp -ivdrug -priorzdv,
+cp_red2<- coxph(Surv(time,censor)~.-time_d -censor_d -txgrp -ivdrug -priorzdv,
                 data=aids)
 cp_red2$loglik
-#cp_red2
 
 #likelihood ratio test and p-value
 s2 <- 2*(cp_red1$loglik[2]-cp_red2$loglik[2])
 1-pchisq(s2,1)
 
 #reduced model 3
-cp_red3<- coxph(Surv(time_d,censor_d)~.-time -censor -txgrp -ivdrug -priorzdv
+cp_red3<- coxph(Surv(time,censor)~.-time_d -censor_d -txgrp -ivdrug -priorzdv
                 -raceth, data=aids)
 cp_red3$loglik
-#cp_red3
 
 #likelihood ratio test and p-value
 s3 <- 2*(cp_red2$loglik[2]-cp_red3$loglik[2])
 1-pchisq(s3,1)
 
 #reduced model 4
-cp_red4<- coxph(Surv(time_d,censor_d)~.-time -censor -txgrp -ivdrug -priorzdv
+cp_red4<- coxph(Surv(time,censor)~.-time_d -censor_d -txgrp -ivdrug -priorzdv
                 -raceth -strat2, data=aids)
 cp_red4$loglik
-#cp_red4
 
 #likelihood ratio test and p-value
 s4 <- 2*(cp_red3$loglik[2]-cp_red4$loglik[2])
 1-pchisq(s4,1)
 
 #reduced model 5
-cp_red5<- coxph(Surv(time_d,censor_d)~.-time -censor -txgrp -ivdrug -priorzdv
+cp_red5<- coxph(Surv(time,censor)~.-time_d -censor_d -txgrp -ivdrug -priorzdv
                 -raceth -strat2 -hemophil, data=aids)
 cp_red5$loglik
-#cp_red5
 
 #likelihood ratio test and p-value
 s5 <- 2*(cp_red4$loglik[2]-cp_red5$loglik[2])
 1-pchisq(s5,1)
 
 #reduced model 6
-cp_red6<- coxph(Surv(time_d,censor_d)~.-time -censor -txgrp -ivdrug -priorzdv
+cp_red6<- coxph(Surv(time,censor)~.-time_d -censor_d -txgrp -ivdrug -priorzdv
                 -raceth -strat2 -hemophil -sex, data=aids)
 cp_red6$loglik
-#cp_red6
 
 #likelihood ratio test and p-value
 s6 <- 2*(cp_red5$loglik[2]-cp_red6$loglik[2])
 1-pchisq(s6,1)
 
 #reduced model 7
-cp_red7<- coxph(Surv(time_d,censor_d)~.-time -censor -txgrp -ivdrug -priorzdv
+cp_red7<- coxph(Surv(time,censor)~.-time_d -censor_d -txgrp -ivdrug -priorzdv
                 -raceth -strat2 -hemophil -sex -id, data=aids)
 cp_red7$loglik
-cp_red7
 
 #likelihood ratio
 s7 <- 2*(cp_red6$loglik[2]-cp_red7$loglik[2])
 1-pchisq(s7,1)
 
 #reduced model 8
-cp_red8<- coxph(Surv(time_d,censor_d)~.-time -censor -txgrp -ivdrug -priorzdv
+cp_red8<- coxph(Surv(time,censor)~.-time_d -censor_d -txgrp -ivdrug -priorzdv
                 -raceth -strat2 -hemophil -sex -id, data=aids)
 cp_red8$loglik
-cp_red8
 
 #likelihood ratio
 s8 <- 2*(cp_red7$loglik[2]-cp_red8$loglik[2])
 1-pchisq(s8,1)
 
+#reduced model 9
+cp_red9<- coxph(Surv(time,censor)~.-time_d -censor_d -txgrp -ivdrug -priorzdv
+                -raceth -strat2 -hemophil -sex -id -age, data=aids)
+cp_red9$loglik
+
+#likelihood ratio
+s9 <- 2*(cp_red8$loglik[2]-cp_red9$loglik[2])
+1-pchisq(s9,1)
 ```
 
 To better understand how much the model fit changes with each different explanatory variable, we can use the graphical representation of the Aalen additive regression model. The Aalen model allows for time-varying covariate effects, while the Cox model allows only a common time-dependence through the baseline. In the Aalen model, we have the weighted comparisons of the crude estimate of the hazard rate of each group as compared to a baseline group, which here is defined as the estimate. As we can see, the selected explanatory variables in our model all have an inverse coefficient correlation with the baseline interceipt. The slope of an estimated cumulative regression function is positive when covariate increases and this fact correspond to an increasing hazard rate. On the other hand, if the slope is negative while the covariate increases, then this fact points to a decreasing hazard rate.
@@ -341,22 +340,22 @@ The plots show how the effects of the covariates change over time.
 Power analysis is an important aspect of experimental design. Power tells us how often we can correctly reject the null hypothesis. It is useful in helping us determine how large our sample size must be in order to correctly detect if there is an effect, with a certain level of confidence. Furthermore, it can help us determine the probability with which we will correctly detect an effect given that we have a known sample size. 
 Overall power analysis is important when conducting experiments because without a high level of power, experiments and studies would not receive funding from research centers, such as the the NIH (National Institute of Health). 
 
-In relation to survival analysis, we can simulate survival data and set it as the alternative hypothesis. Using power analysis, we can then determine how often we would be expected to correctly reject our null hypothesis. The code below simulates survival data using the beta coefficients from our Cox PH model. The Cox PH model showed us that *tx*, *karnof*, *cd4*, and *age* were the most significant explanatory variables to predict time until death. Using their respective beta coefficients in the simulation, we can calculate the probability we would reject the null hypothesis given that the alternative hypothesis is the data we have at hand.
+In relation to survival analysis, we can simulate survival data and set it as the alternative hypothesis. Using power analysis, we can then determine how often we would be expected to correctly reject our null hypothesis. The code below simulates survival data using the beta coefficients from our Cox PH model. The Cox PH model showed us that *tx*, *karnof* and *cd4* were the most significant explanatory variables to predict time until death. Using their respective beta coefficients in the simulation, we can calculate the probability we would reject the null hypothesis given that the alternative hypothesis is the data we have at hand.
 
 ### Power Analysis code and simulation
 ```{r}
 #Mean and standard 
-m <-c(mean(aids$tx), mean(aids$karnof), mean(aids$cd4), mean(aids$age))
-s <-c(sd(aids$tx), sd(aids$karnof), sd(aids$cd4), sd(aids$age))
+m <-c(mean(aids$tx), mean(aids$karnof), mean(aids$cd4))#, mean(aids$age))
+s <-c(sd(aids$tx), sd(aids$karnof), sd(aids$cd4))#, sd(aids$age))
 
 #Simulating survival data using coefficients from Cox PH model
 set.seed(1234)
 n.reps <- 100
 simoutput <- c()
 for(i in 1:n.reps){
-  simdata <- sim.survdata(N=851, T=362, num.data.frames=1, censor= 0.9764,xvars=4, mu=m, sd=s, beta = c(-0.867409, -0.071620, -0.016659, 0.073674))
-  model <- coxph(Surv(y, failed) ~ X1 + X2 + X3 +X4, data = simdata$data)
-  simoutput <- rbind(simoutput, cbind(rep = rep(i, 4), model %>% tidy()))
+  simdata <- sim.survdata(N=851, T=362, num.data.frames=1, censor= 0.9764,xvars=3, mu=m, sd=s, beta = c(-0.680710, -0.057422, -0.014622))
+  model <- coxph(Surv(y, failed) ~ X1 + X2 + X3, data = simdata$data)
+  simoutput <- rbind(simoutput, cbind(rep = rep(i, 3), model %>% tidy()))
 }
 
 
@@ -369,16 +368,12 @@ simoutput%>%dplyr::filter(term=="X2")%>%dplyr::summarize(sum(p.value<0.05))
 #Power for the third variable: cd4
 simoutput%>%dplyr::filter(term=="X3")%>%dplyr::summarize(sum(p.value<0.05))
 
-#Power for the fourth variable: age
-simoutput%>%dplyr::filter(term=="X4")%>%dplyr::summarize(sum(p.value<0.05))
-
-
 
 #simoutput%>%dplyr::filter(term=="X4")%>%dplyr::select(estimate)%>%hist(breaks=200)
 
 ```
 
-From the output above, we can see that the power of each of the variables is not very big. The biggest power obtained is 72%, which comes from the *tx* variable. For the other three variables, power is very small. We can also see that *tx* has the largest beta coefficient and the largest power. For bigger beta coefficients we get a larger power because there is a larger effect size. In general, a power of 80% or more is desirable and given that most of our variables return an insignificant power, we would not reject our null hypothesis most of the time. To increase power, we would either have to increase our sample size, $n$, or increase the effect size.
+From the output above, we can see that the power of each of the variables is not very big. The biggest power obtained is 55%, which comes from the *tx* variable. For the other two variables, power is very small. We can also see that *tx* has the largest beta coefficient and the largest power. For bigger beta coefficients we get a larger power because there is a larger effect size. In general, a power of 80% or more is desirable and given that most of our variables return an insignificant power, we would not reject our null hypothesis most of the time. To increase power, we would either have to increase our sample size, $n$, or increase the effect size.
 
 
 References Used:
