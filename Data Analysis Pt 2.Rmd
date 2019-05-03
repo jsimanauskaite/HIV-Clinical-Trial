@@ -335,7 +335,7 @@ The Aalen model assumes that the cumulative hazard $H(t)$ for a subject can be e
 The plots show how the effects of the covariates change over time. 
 
 
-#Patricia's "Something New"
+#Patricia's "Something New": Power analysis using simulated survival data
 
 Power analysis is an important aspect of experimental design. Power tells us how often we can correctly reject the null hypothesis. It is useful in helping us determine how large our sample size must be in order to correctly detect if there is an effect, with a certain level of confidence. Furthermore, it can help us determine the probability with which we will correctly detect an effect given that we have a known sample size. 
 Overall power analysis is important when conducting experiments because without a high level of power, experiments and studies would not receive funding from research centers, such as the the NIH (National Institute of Health).
@@ -432,9 +432,6 @@ library(powerSurvEpi)
 
 #str(simdata2$data)
 ```
-
-
-
 
 
 
