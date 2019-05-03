@@ -42,7 +42,9 @@ library(survival)
 library(survminer)
 library(coxed)
 library(ggplot2)
-library(broom)
+library(dplyr)
+library(plotrix)
+library(ggfortify)
 
 
 aids <- read.csv( "http://pages.pomona.edu/~jsh04747/courses/math150/AIDSdata.csv")
@@ -81,7 +83,6 @@ aids <- aids %>%
 Since there are many values of the explanatory variable *age* in the original data, we've decided to mutate the variable into age categories from under 20 to over 70 in increments of 10 years. Similar modifications have been made to the baseline *CD4* count, just in incrimennts of 50 up until 350+. Furthermore, we changed the labeling and representation of *sex* into "male" and "female" instead of "1" and "2" in the data.
 
 ```{r}
-library(plotrix)
 male<-sum(aids$sex=="male")
 female<-sum(aids$sex=="female")
 slices <- c(male, female) 
@@ -168,10 +169,8 @@ From this chart we see that most of the participants (84%) have never used IV dr
 
 The following graph is a representation of a Kaplan Meier Curve for all participants in the study, we can see that only a few participants dies or were diagnosed with AIDS during the study as the slope of the curve is not experiencing a high decrease.
 ```{r}
-
 fit <- survfit(Surv(time,censor)~1, data = aids)
 ggsurvplot(fit,data = aids,conf.int = FALSE) + ggtitle("Overall")
-
 
 ```
 
@@ -315,7 +314,6 @@ s8 <- 2*(cp_red7$loglik[2]-cp_red8$loglik[2])
 To better understand how much the model fit changes with each different explanatory variable, we can use the graphical representation of the Aalen additive regression model. The Aalen model allows for time-varying covariate effects, while the Cox model allows only a common time-dependence through the baseline. In the Aalen model, we have the weighted comparisons of the crude estimate of the hazard rate of each group as compared to a baseline group, which here is defined as the estimate. As we can see, the selected explanatory variables in our model all have an inverse coefficient correlation with the baseline interceipt. The slope of an estimated cumulative regression function is positive when covariate increases and this fact correspond to an increasing hazard rate. On the other hand, if the slope is negative while the covariate increases, then this fact points to a decreasing hazard rate.
 
 ```{r}
-library(ggfortify)
 aids <- read.csv( "http://pages.pomona.edu/~jsh04747/courses/math150/AIDSdata.csv")
 
 aa_fit <-aareg(Surv(time, censor) ~ cd4 + karnof+ priorzdv +hemophil +raceth +sex +tx +ivdrug,
@@ -338,14 +336,10 @@ The plots show how the effects of the covariates change over time.
 #Patricia's "Something New": Power analysis using simulated survival data
 
 Power analysis is an important aspect of experimental design. Power tells us how often we can correctly reject the null hypothesis. It is useful in helping us determine how large our sample size must be in order to correctly detect if there is an effect, with a certain level of confidence. Furthermore, it can help us determine the probability with which we will correctly detect an effect given that we have a known sample size. 
-Overall power analysis is important when conducting experiments because without a high level of power, experiments and studies would not receive funding from research centers, such as the the NIH (National Institute of Health).
+Overall power analysis is important when conducting experiments because without a high level of power, experiments and studies would not receive funding from research centers, such as the the NIH (National Institute of Health). 
 
+In relation to survival analysis, we can simulate survival data and set it as the alternative hypothesis. Using power analysis, we can then determine how often we would be expected to correctly reject our null hypothesis. The code below simulates survival data using the beta coefficients from our Cox PH model. The Cox PH model showed us that *tx*, *karnof*, *cd4*, and *age* were the most significant explanatory variables to predict time until death. Using their respective beta coefficients in the simulation, we can calculate the probability we would reject the null hypothesis given that the alternative hypothesis is the data we have at hand.
 
-### 2. How it is relevant? How it relates to survival analysis/analysis at hand?
-Power analysis relates to survival analysis because if power is large after comparing our data to the simulated survival data, this tells us that there is a high chance that we would reject the null in favor of the alternative (control versus treatment?)
-
-### 3. Resources to learn about the topic.
-Below are some of the resources I have begun to use to learn about creating simulations of survival curves and performing power analysis:
 
 a). https://cran.r-project.org/web/packages/coxed/vignettes/simulating_survival_data.html
 b). http://www.icssc.org/documents/advbiosgoa/tab%2026.00_survss.pdf
@@ -353,18 +347,9 @@ b). http://www.icssc.org/documents/advbiosgoa/tab%2026.00_survss.pdf
 
 ### Power Analysis code and simulation
 ```{r}
-simdata <- sim.survdata(N=1000, T=100, num.data.frames=1, beta = c(0.01,0.07,0.3))
-head(simdata$data,10)
-simdata$betas
-head(simdata$baseline,10)
-
-
 #ggsurvplot(survfit(Surv(y,failed) ~ X1 + X2 + X3, data = simdata$data))
-model <- coxph(Surv(y, failed) ~ X1 + X2 + X3, data = simdata$data)
-
-library(dplyr)
-library(broom)
-model %>% tidy()
+#model <- coxph(Surv(y, failed) ~ X1 + X2 + X3, data = simdata$data)
+#model %>% tidy()
 
 set.seed(1234)
 n.reps <- 100
@@ -376,7 +361,6 @@ for(i in 1:n.reps){
   
 }
 
-#simoutput
 
 #sum(which(simoutput$p.value < 0.05))
 sum(simoutput$p.value < 0.05)
@@ -400,39 +384,10 @@ m
 s
 simoutput%>%dplyr::filter(term=="X4")%>%dplyr::select(estimate)%>%hist(breaks=200)
 
-
-temp <- sim.survdata(N=851, num.data.frames = 1, xvars = 4, beta = c(-0.867409, -0.071620, -0.016659, 0.073674), censor = 0.9764, mu=m,sd=s)
 str(temp$data)
 hist(temp$data$X3)
-library(FDRsampsize)
-library(powerSurvEpi)
+
 ```
-
-```{r}
-### POWER ANALYSIS AND SIMULATION ###
-#set.seed(1234)
-#n.reps <- 100
-#simoutput2 <- c()
-#for(i in 1:n.reps){
-  #simdata2 <- sim.survdata(N=851, T=362, num.data.frames=1, censor= 0.2, 
-                          #X=aids[,c(6,13,14,16)] ,
-                          #beta = c(-0.867409, -0.071620, -0.016659, 0.073674))
-  #model <- coxph(Surv(y, failed) ~ tx + karnof, data = simdata2$data)
-  #simoutput2 <- rbind(simoutput2, cbind(rep = rep(i, 2), model %>% tidy()))
-  
-#}
-
-#simoutput2%>%dplyr::filter(term=="tx")%>%dplyr::summarize(sum(p.value<0.05))
-
-#simoutput2%>%dplyr::filter(term=="karnof")%>%dplyr::summarize(sum(p.value<0.05))
-
-#simoutput2%>%dplyr::filter(term=="cd4")%>%dplyr::summarize(sum(p.value<0.05))
-
-#simoutput2%>%dplyr::filter(term=="age")%>%dplyr::summarize(sum(p.value<0.05))
-
-#str(simdata2$data)
-```
-
 
 
 # Juste's "Something New": The Schoenfeld Residuals for the Cox PH model
