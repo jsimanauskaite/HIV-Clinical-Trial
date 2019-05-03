@@ -101,6 +101,14 @@ aids <- aids %>%
                                                         ifelse(age <=70, "60-70", "over70"))))))) %>%
   mutate(age = factor(age,
                        levels = c("under20", "20-30", "30-40","40-50", "50-60","60-70","over70")),  sex = ifelse(sex == 2, "male","female"))
+
+aids <- aids %>% 
+  mutate(cd4 = ifelse(cd4 <=50, "0-50", 
+                             ifelse(cd4 <=100, "50-100",
+                                    ifelse(cd4 <= 150, "100-150",
+                                           ifelse(cd4 <=200, "150-200",
+                                                 ifelse(cd4 <=250, "200-250",
+                                                        ifelse(cd4 <=300, "300-350", "350+"))))))) 
 ```
 
 

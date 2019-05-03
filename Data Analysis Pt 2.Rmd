@@ -31,13 +31,9 @@ Follow ups were made at weeks 4,8, and 16 and every eight weeks afterwards. CD4 
 
 The statistical analysis methods used to interpret results were Kaplan-Meier estimates, log-rank tests, and proportional hazards models. The p-values, estimates of treatment differences and 95% confidence intervals were not adjusted for repeated analysis.
 
-<<<<<<< HEAD
-The data and results have been reviewed again in 2019 and have been analyzed via statistic methods such as Cox Proportional Hazards test, Kaplan-Meier estimates, Aalen model, Power analysis, and Schoenfeld residuals.
-```{r global_options, include=TRUE, message=FALSE, warning=FALSE}
-=======
-The data and results have been reviewed again in 2019 and have been analyzed via statistic methhods such as Cox Proportional Hazards test, Kaplan-Meier estimates, Aalen model, Power analysis, and Schoenfeld residuals.
+
 ```{r global_options, include=TRUE, message=FALSE, warning=FALSE, echo=FALSE}
->>>>>>> f7021b226a53ea3a3d81ec8f2dc4cdc603f3a890
+
 knitr::opts_chunk$set(message=FALSE, warning=FALSE, fig.height=3, fig.width=5, 
                       fig.align="center")
 library(tidyverse)
@@ -181,12 +177,8 @@ ggsurvplot(fit,data = aids,conf.int = FALSE) + ggtitle("Overall")
 
 ```
 
-<<<<<<< HEAD
-The following graph is a representation of the Kaplan-Meier survival probability based on the treatment indicator. In this case *tx=0* was the control group and *tx=1* the treatment group that was given IDV. Already, we can see a trend in the graph that the control group shows a lower survival probability with time. According to the log-rank test, we see that the p-value for the test statistic is equal to 0.002 (<0.05), thus we can reject the null hypothesis that the two population survival functions are the same, and the alternative is accepted, which says that the survival curves are different. The Wilcoxon test also provides us with a small p-value of 0.002 , which again rejects the null and goes in agreement with our primary conclusion.
-=======
-The following graph is a representation of the Kaplan-Meier survival probability based on the treatment indicator. In this case *tx=0* was the control group and *tx=1* the treatment group that was gived IDV. Already, we can see a tred in the graph that the control group shows a lower survival probability with time. According to the log-rank test, we see that the p-value for the test statistic is equal to 0.002 (<0.05), thus we can reject the null hypothesis that the two population survival functions are the same, and the alternative is accepted, which says that the survival curves are different. The Wilcoxon test also provides us with a small p-value of 0.002 , which again rejects the null and goes in agreement with our primary conclusion.
+The following graph is a representation of the Kaplan-Meier survival probability based on the treatment indicator. In this case *tx=0* was the control group and *tx=1* the treatment group that was given IDV. Already, we can see a trend in the graph that the control group shows a lower survival probability with time. According to the log-rank test, we see that the p-value for the test statistic is equal to 0.002 (<0.05), thus we can reject the null hypothesis that the two population survival functions are the same, and the alternative is accepted, which says that the survival curves are different. The Wilcoxon test also provides us with a small p-value of 0.06 , which again rejects the null and goes in agreement with our primary conclusion.
 
->>>>>>> f7021b226a53ea3a3d81ec8f2dc4cdc603f3a890
 ```{r}
 fit1 <- survfit(Surv(time,censor)~tx, data = aids)
 ggsurvplot(fit1,data = aids,conf.int = FALSE) + ggtitle("Treatment Indicator")
@@ -196,8 +188,17 @@ survdiff(Surv(time,censor)~tx, data = aids, rho=0)
 'Wilcoxon'
 survdiff(Surv(time,censor)~tx, data = aids, rho=1)
 ```
-
+The Kaplan-Meier curves for survival probability based on *age* as an explanatory variable, with ether a grouped or ungrouped methods. If we leave the variable unchanged (ungrouped), according to log-rank and Wilcoxon tests, we get p-values of 0.008 and 0.009 respectively, (<0.05), thus rejecting the null of no difference, therefore it is considered a signifcant variable in the data set. However, with grouping of the age variable, we achieve a more consise, yet a nonsignificant Kaplan-Meier distribution, where the p-values in log-rank and Wilcoxon tests are equal to 0.3, therefore, failing to reject the null of no difference, indicating thhat it has no significant effect on the overall survival probability. 
 ```{r}
+fit2 <- survfit(Surv(time,censor)~age, data = aids)
+ggsurvplot(fit2,data = aids,conf.int = FALSE) + ggtitle("Age")
+
+'Log-Rank'
+survdiff(Surv(time,censor)~age, data = aids, rho=0)
+'Wilcoxon'
+survdiff(Surv(time,censor)~age, data = aids, rho=1)
+
+aids <- read.csv( "http://pages.pomona.edu/~jsh04747/courses/math150/AIDSdata.csv")
 fit2 <- survfit(Surv(time,censor)~age, data = aids)
 ggsurvplot(fit2,data = aids,conf.int = FALSE) + ggtitle("Age")
 
@@ -217,13 +218,10 @@ survdiff(Surv(time,censor)~cd4, data = aids, rho=0)
 'Wilcoxon'
 survdiff(Surv(time,censor)~cd4, data = aids, rho=1)
 ```
-<<<<<<< HEAD
-The final explanatory variable we're investigating as a part of our model is the Karnofsky Performance Scale. The Kaplan-Meier curves for this variable present a higher amplitude of distributions across the survival scale. The p-values of both log-rank and the Wilcoxon Test again present with the same significant p-value of  5e-10  (<0.05), thus we can reject the null hypothesis of no difference between the curves and consider this a significant variable in the construction of our model.
-=======
 
 The final explanatory variable we're investigating as a part of our model is the Karnofsky Performance Scale. The Kaplan-Meier curves for this variable present a higher amplitude of distributions across the survival scale. The p-values of both log-rank and the Wilcoxon Test again present with the same significant p-value of  5e-10  (<0.05), thus we can reject the null hypothesis of no difference between the curves and consider this a significant variable in the construction of our model.
 
->>>>>>> f7021b226a53ea3a3d81ec8f2dc4cdc603f3a890
+
 ```{r}
 aids_fit_time_k <- survfit(Surv(time, censor) ~karnof  , data=aids)
 ggsurvplot(aids_fit_time_k, data=aids,  conf.int = TRUE) +
@@ -236,7 +234,7 @@ survdiff(Surv(time,censor)~karnof, data = aids, rho=1)
 
 ```
 
-To decide what variables to use in our Cox proportional hazards (PH) model, we can use backwards selection to determine what explanatory variables are most important to the model, along with the likelihood ratio test to compare differences in our models. Using time_d and censor_d as the response variables, we begin with the full model that includes the rest of the variables (minus time and censor) as the explanatory variables. We remove the variable with the highest $p$ value first and create a new model without this variable. Using the likelihood ratio test between the two models, we then determine whether or not the variable added significance to the model. We continued this process until we arrived at the best model which uses *tx*, *karnof*, *cd4* and *age* as the explanatory variables.
+To decide what variables to use in our Cox proportional hazards (PH) model, we can use backwards selection to determine what explanatory variables are most important to the model, along with the likelihood ratio test to compare differences in our models. Using *time_d* and *censor_d* as the response variables, we begin with the full model that includes the rest of the variables (minus time and censor) as the explanatory variables. We remove the variable with the highest $p$ value first and create a new model without this variable. Using the likelihood ratio test between the two models, we then determine whether or not the variable added significance to the model. We continued this process until we arrived at the best model which uses *tx*, *karnof*, *cd4* and *age* as the explanatory variables.
 
 ```{r}
 ### COX PH MODEL USING BACKWARDS SELECTION ####
@@ -331,10 +329,7 @@ s8 <- 2*(cp_red7$loglik[2]-cp_red8$loglik[2])
 
 To better understand how much the model fit changes with each different explanatory variable, we can use the graphical representation of the Aalen additive regression model. The Aalen model allows for time-varying covariate effects, while the Cox model allows only a common time-dependence through the baseline. In the Aalen model, we have the weighted comparisons of the crude estimate of the hazard rate of each group as compared to a baseline group, which here is defined as the estimate. As we can see, the selected explanatory variables in our model all have an inverse coefficient correlation with the baseline interceipt. The slope of an estimated cumulative regression function is positive when covariate increases and this fact correspond to an increasing hazard rate. On the other hand, if the slope is negative while the covariate increases, then this fact points to a decreasing hazard rate.
 
-<<<<<<< HEAD
-To better understand how much the model fit changes with each different explanatory variable, we can use the graphical representation of the Aalen additive regression model. The Aalen model allows for time-varying covariate effects, while the Cox model allows only a common time-dependence through the baseline. In the Aalen model, we have the weighted comparisons of the crude estimate of the hazard rate of each group as compared to a baseline group, which here is defined as the estimate. As we can see, the selected explanatory variables in our model all have an inverse coefficient correlation with the baseline intercept. The slope of an estimated cumulative regression function is positive when covariate increases and this fact correspond to an increasing hazard rate. On the other hand, if the slope is negative while the covariate increases, then this fact points to a decreasing hazard rate.
-=======
->>>>>>> f7021b226a53ea3a3d81ec8f2dc4cdc603f3a890
+
 ```{r}
 aids <- read.csv( "http://pages.pomona.edu/~jsh04747/courses/math150/AIDSdata.csv")
 
@@ -468,17 +463,11 @@ here, $m$ is the total number of deaths in the data set.
 Following the calculations, the residuals are plotted against time in order to test the proportional hazards assumption. If the assumption is correct, the residuals should be fitting around the line centered at zero (y=0). The further away this predicted line is form the horizontal of (y=0) the more likely one is to call the PH assumption to question and determine whether it is met through the model.
 
 ***
-*To go a little deeper into the analysis of the resiaul calculation, one can look at the calculations of the test statistic for this residual mdoel.*
 
-By producing a least squares slope of regression and assuming a relationship between $s^*_{kj}$ and $t_{kj}$ or some function $g(t_k)$ allows to derive a test statistic for the proportional hazards assumption in regards to the $j^{th}$ covariate, which is given by:
+* The 
 
-$T_j=\frac{[\sum^d_{k=1}(g(t_k)-\hat{g})s^8_{kj}]^2}{dI^{jj}\sum^d_{k=1}(g(t_k)-\hat{g})^2}$
+*Interpretation of Schoenfeld Residuals: theoretical & graphical (R graphs and the p-values presented.)c*
 
-Here, the distribution is asymptotically as $X^2(1)$ stating the null hypothesis that the relationship between the covariate, in this case $j$ and the event time follows the assumption of PH.
-
-***
-
-*Interpretation of Schoenfeld Residuals from plots in R and the p-values presented.*
 
 The y-axis of the Schoenfeld residuals graph can be interpreted as the log of the hazard ratio for the explanatory variable-- the coefficient in Cox’s model if it were allow to vary over time. If the graph is flat, then the PH assumption is adequate. Furthermore, the Schoenfeld residuals are independent of time. A plot that shows a non-random pattern against time is evidence of violation of the PH assumption. The PH assumption is supported when there's a non-significant relationship between residuals and time.
 ### HIV Data Cox PH model analysis using Schoenfeld Residuals
