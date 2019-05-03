@@ -1,6 +1,7 @@
 ---
 title: "Survival Analysis Project: HIV Clinical Trial"
 author: "Juste Simanauskaite & Patricia Rivera"
+date: "Friday May 3rd, 2019 "
 geometry: margin=2cm
 output: 
   pdf_document: 
@@ -13,10 +14,14 @@ output:
     fig_crop: false
   html_document: default
 ---
+
+Data Analysis Based on study by Hammer, et. al.,1997. *A Controlled Trial of Two Nucleoside Analogues plus Indinavir in Persons with Human Immunodeficiency Virus Infection and CD4 Cell Counts of 200 per Cubic Millimeter or Less.* 
+
 # Introduction
   HIV (Human Immunodeficiency Virus) is a disease known as an immune system disorder, which causes severe destruction of white blood cells that are responsible for fighting infection. The presence of this disorder is a lead-in for a human to be more prone to infections and cancer diseases. AIDS is the final stage of HIV, which is not always developed in HIV patients. Zidovudine (AZT) is known as antiretroviral medication for prevention of HIV/AIDS, whereas lamuvidine (3TC) is an inhibitor medication that works in decreasing HIV and hepatitis B. Previously, it has been founded that three-drug combinations, in particular, with a previous exposure to AZT, have shown the most significant resulted in reducing HIV-1 RNA concentrations. Therefore, this study used indinavir sulfate (a synthetic antiviral agent that inhibits HIV protease activity) in combination with AZT and 3TC as well as variation of placebo treatments to determine the potency of triple drug therapy in the cases of  advanced HIV-1 patients. The study hypothesized that a three-drug combination, including a HIV-protease inhibitor and two nucleoside analogues (AZT and 3TC) would alter the progression of the HIV-1 disease. The study was successful in reaching significant data of the clinical superiority of a three-drug approach with inidavor over a treatment containing only a two-drug combination.
 
 The current analysis of the data from a study conducted by Hammer et al. in 1997 considers the response variable to be *time*, which here describes the amount of time in days for the time of death, AIDS diagnosis, or the termination of the study. Another important variable used for the analysis is *censor*, which indicates the participants of the study that survived till the termination of the study without dying or being diagnosed AIDS. The study explored the influence of the explanatory variable *tx*. referring to the treatment group that was differentiated into: a control (placebo group) and a treatment group that included IDV (indinavir)
+
 # Methods
 
 The study was a randomized, double-blind, and a placebo-controlled trial that compared a three-drug treatment of indinavir (Crixivan), zidovudine (AZT) and lamivudine (3TC) with a two-drug treatment. Patients were selected based on the factor that they had no more than 200 CD4 cells per cubic millimeter at least 3 months prior to AZT therapy. The patients had to be more than 16 years old, with a diagnostic documentation of HIV-1 infection, having no more than 1 week of prior lamuvidine treatment, and a Karnofsky score of at least 70.
@@ -455,7 +460,7 @@ Following the calculations, the residuals are plotted against time in order to t
 
 -- The Schoenfeld residuals are used to examine the model fit and detect outlying covariate values. Shoenfeld residuals represent the difference between the observed covariate and the expected given the risk set at that time. They should be flat, centered about zero in order for the Proportional Hazards assumption to be true. --
 
--- Furthermore, the Schoenfeld residuals are independent of time. A plot that shows a non-random pattern against time is evidence of violation of the PH assumption in regards to time because Schoenfeld residuals should be independent of them. The PH assumption is supported when there's a non-significant relationship between residuals and time. --
+-- Furthermore, the Schoenfeld residuals are independent of time. A plot that shows a non-random pattern against time is evidence of violation of the PH assumption in regards to time because Schoenfeld residuals should be independent of them. The PH assumption is supported when there's a non-significant relationship between residuals and time (Schoenfeld, 1984). --
 
 ### HIV Data Cox PH model analysis using Schoenfeld Residuals
 
@@ -463,7 +468,7 @@ Schoenfeld Residuals applied to our best Cox PH model for AIDS data where, we ha
 
 The *cox.zph()* function provides a Goodness-of-Fit (GOF) test, which tests the correlation between Schoenfeld residuals and survival time. Here, taking with an alpha level of $\alpha=0.05$ the p-value below this would reject the null of independence, thus indicating that the residuals are in fact dependent on time and thus the PH assumption is not satisfied. If the p-value is greater than $\alpha$, the null of independence is accepted and thus the PH assumption is met. 
 
-A graphical representation is achieved using either *ggcoxzph()* or *ggcoxdiagnostics()* functions, that overall should show no pattern in the graphs in order to indicate a PH assumption. In the *ggcoxzph()* function, the solid line is a smoothing spline fit to the plot, with the dashed lines representing a +/- 2-standard-error. Whereas, in *ggcoxdiagnostics()* function graph, the dashed blue line represents the fit to the plot, via red dashed line representing the y=0 point of reference and the grey area around the blue line representing  the +/- 2-standard-error.
+A graphical representation is achieved using either *ggcoxzph()* or *ggcoxdiagnostics()* functions, that overall should show no pattern in the graphs in order to indicate a PH assumption. In the *ggcoxzph()* function, the solid line is a smoothing spline fit to the plot, with the dashed lines representing a +/- 2-standard-error. Whereas, in *ggcoxdiagnostics()* function graph, the dashed blue line represents the fit to the plot, via red dashed line representing the y=0 point of reference and the grey area around the blue line representing  the +/- 2-standard-error (Sestelo, 2017).
 ```{r}
 knitr::opts_chunk$set(message=FALSE, warning=FALSE, fig.height=3, fig.width=5, 
                       fig.align="center")
@@ -499,9 +504,49 @@ Looking at the output results and the graphs for all the variables selected in o
 
 # Discussion
 
-# Conclusion
 
-# References:
-1. http://www.ukm.my/jsm/pdf_files/SM-PDF-46-3-2017/15%20Aditif%20Aalen.pdf 
+# References
+  
+  
+  A Short-Term Study of the Safety, Pharmacokinetics, and Efficacy of Ritonavir, an Inhibitor of HIV-1 Protease | NEJM. (n.d.). Retrieved April 29, 2019, from https://www.nejm.org/doi/full/10.1056/NEJM199512073332303
+  
+  
+  Başar, E. (2017). Aalen’s Additive, Cox Proportional Hazards and the Cox-Aalen Model: Application to Kidney Transplant Data. Sains Malaysiana, 46(3), 469–476. https://doi.org/10.17576/jsm-2017-4603-15
+  
+  
+  Danner, S. A., Carr, A., Leonard, J. M., Lehman, L. M., Gudiol, F., Gonzales, J., … Cooper, D. A. (1995). A Short-Term Study of the Safety, Pharmacokinetics, and Efficacy of Ritonavir, an Inhibitor of HIV-1 Protease. New England Journal of Medicine, 333(23), 1528–1534. https://doi.org/10.1056/NEJM199512073332303
+  
+  
+  Hammer, S. M., Squires, K. E., Hughes, M. D., Grimes, J. M., Demeter, L. M., Currier, J. S., … Cook, J. C. (1997). A Controlled Trial of Two Nucleoside Analogues plus Indinavir in Persons with Human Immunodeficiency Virus Infection and CD4 Cell Counts of 200 per Cubic Millimeter or Less. New England Journal of Medicine, 337(11), 725–733. https://doi.org/10.1056/NEJM199709113371101
+  
+  
+  Harden, J. J., & Kropko, J. (2018). Simulating Duration Data for the Cox Model. Political Science Research and Methods, 1–8. https://doi.org/10.1017/psrm.2018.19
 
-# Acknowledgements
+
+  Markowitz, M., Saag, M., Powderly, W. G., Hurley, A. M., Hsu, A., Valdes, J. M., … Ho, D. D. (1995). A Preliminary Study of Ritonavir, an Inhibitor of HIV-1 Protease, to Treat HIV-1 Infection. New England Journal of Medicine, 333(23), 1534–1540. https://doi.org/10.1056/NEJM199512073332204
+
+
+  PubChem. (n.d.). Indinavir sulfate. Retrieved April 29, 2019, from https://pubchem.ncbi.nlm.nih.gov/compound/5462355
+  
+  
+  Schoenfeld, David. (1982.) “Partial Residuals for the Proportional Hazards Regression Model.” Biometrika 69 (1): 239–41. doi:10.1093/biomet/69.1.239.
+  
+  
+  Sestelo, Marta, A short course on Survival Analysis applied to the Financial Industry. (2017). Retrieved May 3, 2019, from https://bookdown.org/sestelo/sa_financial/how-to-evaluate-the-ph-assumption.html
+  
+  
+  Therneau, T. M., & Grambsch, P. M. (2000a). Multiple Events per Subject. In T. M. Therneau & P. M. Grambsch (Eds.), Modeling Survival Data: Extending the Cox Model (pp. 169–229). https://doi.org/10.1007/978-1-4757-3294-8_8
+
+
+  Therneau, T. M., & Grambsch, P. M. (2000b). Residuals. In T. M. Therneau & P. M. Grambsch (Eds.), Modeling Survival Data: Extending the Cox Model (pp. 79–86). https://doi.org/10.1007/978-1-4757-3294-8_4
+  
+  
+  Therneau, T. M., & Grambsch, P. M. (2000c). Testing Proportional Hazards. In T. M. Therneau & P. M. Grambsch (Eds.), Modeling Survival Data: Extending the Cox Model (pp. 127–152). https://doi.org/10.1007/978-1-4757-3294-8_6
+
+
+  Therneau, T. M., & Grambsch, P. M. (2000d). The Cox Model. In T. M. Therneau & P. M. Grambsch (Eds.), Modeling Survival Data: Extending the Cox Model (pp. 39–77). https://doi.org/10.1007/978-1-4757-3294-8_3
+
+
+  Weaver, M. A. (n.d.). Sample Size Calculations for Survival Analysis. 22.
+
+
