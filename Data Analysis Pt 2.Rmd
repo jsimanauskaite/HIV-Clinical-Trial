@@ -231,7 +231,7 @@ survdiff(Surv(time,censor)~karnof, data = aids, rho=1)
 
 ```
 
-To decide what variables to use in our Cox proportional hazards (PH) model, we can use backwards selection to determine what explanatory variables are most important to the model, along with the likelihood ratio test to compare differences in our models. Using *time* and *censor* as the response variables, we begin with the full model that includes the rest of the variables (minus time_d and censor_d) as the explanatory variables. We remove the variable with the highest $p$ value first and create a new model without this variable. Using the likelihood ratio test between the two models, we then determine whether or not the variable added significance to the model. We continued this process until we arrived at the best model which uses *tx*, the variable that indicates which treatment an individual is on, *karnof*, the variable that measures the initial state of health of the individual prior to the start of the treatment using the Karnofsky Performance Scale rating, and *cd4*, the baseline count of cd4 cells, as the explanatory variables.
+To decide what variables to use in our Cox proportional hazards (PH) model, we can use backwards selection to determine what explanatory variables are most important to the model, along with the likelihood ratio test to compare differences in our models. Using *time* and *censor* as the response variables, we begin with the full model that includes the rest of the variables (minus time_d and censor_d) as the explanatory variables. We remove the variable with the highest $p$-value first and create a new model without this variable. Using the likelihood ratio test between the two models, we then determine whether or not the variable added significance to the model. We continued this process until we arrived at the best model which uses *tx*, the variable that indicates which treatment an individual is on, *karnof*, the variable that measures the initial state of health of the individual prior to the start of the treatment using the Karnofsky Performance Scale rating, and *cd4*, the baseline count of cd4 cells, as the explanatory variables.
 
 The significance of these variables in our Cox PH model allows us to conclude that there is evidence to suggest that the initial state of health of the individual and their baseline cd4 cell count are significant factors in determing the time it will take an individual to get diagnosed with AIDS or die. The treatment indicator variable, *tx*, had a $p$-value that was not significant. Therefore, we can conclude that being in the treatment group versus being in the control group does not have a significant effect on the time until an AIDS diagnosis or death for an individual. 
 
@@ -358,8 +358,8 @@ In relation to survival analysis, we can simulate survival data and set it as th
 ### Power Analysis code and simulation
 ```{r}
 #Mean and standard deviations of explanatory variables
-m <-c(mean(aids$tx), mean(aids$karnof), mean(aids$cd4))#, mean(aids$age))
-s <-c(sd(aids$tx), sd(aids$karnof), sd(aids$cd4))#, sd(aids$age))
+m <-c(mean(aids$tx), mean(aids$karnof), mean(aids$cd4))
+s <-c(sd(aids$tx), sd(aids$karnof), sd(aids$cd4))
 
 #Simulating survival data using coefficients from Cox PH model
 set.seed(1234)
@@ -503,11 +503,10 @@ Looking at the output results and the graphs for all the variables selected in o
 
 # Discussion
 
-<<<<<<< HEAD
+
 # Conclusion
 Overall, the purpose of this paper was to
 =======
->>>>>>> 45613c2fe5f98327c1de26ec38e5b664fb6f2b78
 
 # References
   
