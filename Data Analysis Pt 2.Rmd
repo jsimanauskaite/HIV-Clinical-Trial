@@ -439,7 +439,7 @@ The *cox.zph()* function provides a Goodness-of-Fit (GOF) test, which tests the 
 
 A graphical representation is achieved using either *ggcoxzph()* or *ggcoxdiagnostics()* functions, that overall should show no pattern in the graphs in order to indicate a PH assumption. In the *ggcoxzph()* function, the solid line is a smoothing spline fit to the plot, with the dashed lines representing a +/- 2-standard-error. Whereas, in *ggcoxdiagnostics()* function graph, the dashed blue line represents the fit to the plot, via red dashed line representing the y=0 point of reference and the grey area around the blue line representing  the +/- 2-standard-error (Sestelo, 2017).
 ```{r}
-knitr::opts_chunk$set(message=FALSE, warning=FALSE, fig.height=3, fig.width=5, 
+knitr::opts_chunk$set(message=FALSE, warning=FALSE, fig.height=2, fig.width=4, 
                       fig.align="center")
 cph_tx <- coxph(Surv(time,censor)~ tx, data = aids)
 zph_tx <- cox.zph(cph_tx)
