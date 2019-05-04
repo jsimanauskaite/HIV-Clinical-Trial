@@ -216,7 +216,7 @@ survdiff(Surv(time,censor)~karnof, data = aids, rho=1)
 
 To decide what variables to use in our Cox proportional hazards (PH) model, we can use backwards selection to determine what explanatory variables are most important to the model, along with the likelihood ratio test to compare differences in our models. Using *time* and *censor* as the response variables, we begin with the full model that includes the rest of the variables (minus time_d and censor_d) as the explanatory variables. We remove the variable with the highest $p$ value first and create a new model without this variable. Using the likelihood ratio test between the two models, we then determine whether or not the variable added significance to the model. We continued this process until we arrived at the best model which uses *tx*, the variable that indicates which treatment an individual is on, *karnof*, the variable that measures the initial state of health of the individual prior to the start of the treatment using the Karnofsky Performance Scale rating, and *cd4*, the baseline count of cd4 cells, as the explanatory variables.
 
-  The significance of these variables in our Cox PH model allows us to conclude that there is evidence to suggest that the initial state of health of the individual and their baseline cd4 cell count are significant factors in determing the time it will take an individual to get diagnosed with AIDS or die. The treatment indicator variable, *tx*, had a $p$-value that was not significant. Therefore, we can conclude that being in the treatment group versus being in the control group does not have a significant effect on the time until an AIDS diagnosis or death for an individual when being combined with these other variables.
+  The significance of these variables in our Cox PH model allows us to conclude that there is evidence to suggest that the treatment group in which an individual was in, the initial state of health of the individual, and their baseline cd4 cell count are significant factors in determing the time it will take an individual to get diagnosed with AIDS or die.
 
 
 ```{r}
@@ -437,6 +437,7 @@ Schoenfeld Residuals applied to our best Cox PH model for AIDS data where, we ha
 The *cox.zph()* function provides a Goodness-of-Fit (GOF) test, which tests the correlation between Schoenfeld residuals and survival time. Here, taking with an alpha level of $\alpha=0.05$ the p-value below this would reject the null of independence, thus indicating that the residuals are in fact dependent on time and thus the PH assumption is not satisfied. If the p-value is greater than $\alpha$, the null of independence is accepted and thus the PH assumption is met. 
 
 A graphical representation is achieved using either *ggcoxzph()* or *ggcoxdiagnostics()* functions, that overall should show no pattern in the graphs in order to indicate a PH assumption. In the *ggcoxzph()* function, the solid line is a smoothing spline fit to the plot, with the dashed lines representing a +/- 2-standard-error. Whereas, in *ggcoxdiagnostics()* function graph, the dashed blue line represents the fit to the plot, via red dashed line representing the y=0 point of reference and the grey area around the blue line representing  the +/- 2-standard-error (Sestelo, 2017).
+
 ```{r}
 knitr::opts_chunk$set(message=FALSE, warning=FALSE, fig.height=2, fig.width=4, 
                       fig.align="center")
@@ -458,7 +459,6 @@ zph_k
 ggcoxzph(zph_k, point.size = 1, point.shape = 10)
 ggcoxdiagnostics(cph_k, type="schoenfeld")
 
-
 ```
 
 Looking at the output results and the graphs for all the variables selected in our Cox PH model: *tx*, *cd4*,and *karnof*. The p-values for the variables are 0.544, 0.207, and 0.92 respectively. All of these values are greater than the $\alpha=0.05$, which indicates that the proportional hazards assumption is met for all variables involved in the model and that the Schoenfeld residuals of the explanatory variables are independent of time.
@@ -468,8 +468,7 @@ Looking at the output results and the graphs for all the variables selected in o
 
 # Conclusion
 
-  Overall, the purpose of this paper was to evaluate the data from the study conducted by Hammer et al. in 1997 that was investigating the time to AIDS diagnosis or death of HIV-infected adults based on different individual factors. We began by doing exploratory data analysis on some of the variables in our dataset. From this, we saw that the gender distribution was unbalanced, with 84% of the participants being female as well as unequal race distribution, with White Non-Hispanic identifying individuals accounting for slightly over half of the sample. Looking at the Kaplan-Meier curve, it was interesting to see that the majority of the individuals in the study did not die or were diagnosed with AIDS during the duration of the study. Using time to AIDS defininig diagnosis or death as our response variable in our model
-
+  Overall, the purpose of this paper was to evaluate the data from the study conducted by Hammer et al. in 1997 that was investigating the time to AIDS diagnosis or death of HIV-infected adults based on different individual factors. We began by doing exploratory data analysis on some of the variables in our dataset. From this, we saw that the gender distribution was unbalanced, with 84% of the participants being female as well as unequal race distribution, with White Non-Hispanic identifying individuals accounting for slightly over half of the sample. Looking at the Kaplan-Meier curve, it was interesting to see that the majority of the individuals in the study did not die or were diagnosed with AIDS during the duration of the study. To then analyze which variables had the most significant effect on *time*, the time to AIDS diagnosis or death, we used a backwards selection method to construct a Cox PH model. Our final model consisted of *tx*, *karnof*, and *cd4* as the most significant explanatory response variables. In other words, these variables had the most significant effect on determining the time to AIDS diagnosis or death of an individual. Furthermore, analyzing these variables individually on their effect on survival using the log-rank and Wilcoxon tests, we can see that these variables are also significant in determining survival probabilities. 
 
 
 # References
