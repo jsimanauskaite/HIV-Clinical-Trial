@@ -463,10 +463,7 @@ ggcoxdiagnostics(cph_k, type="schoenfeld")
 
 Looking at the output results and the graphs for all the variables selected in our Cox PH model: *tx*, *cd4*,and *karnof*. The p-values for the variables are 0.544, 0.207, and 0.92 respectively. All of these values are greater than the $\alpha=0.05$, which indicates that the proportional hazards assumption is met for all variables involved in the model and that the Schoenfeld residuals of the explanatory variables are independent of time.
 
-
 # Discussion
-
-# Conclusion
 
   Overall, the purpose of this paper was to evaluate the data from the study conducted by Hammer et al. in 1997 that was investigating the time to AIDS diagnosis or death of HIV-infected adults based on different individual factors. We began by doing exploratory data analysis on some of the variables in our dataset. From this, we saw that the gender distribution was unbalanced, with 84% of the participants being female as well as unequal race distribution, with White Non-Hispanic identifying individuals accounting for slightly over half of the sample. Looking at the Kaplan-Meier curve, it was interesting to see that the majority of the individuals in the study did not die or were diagnosed with AIDS during the duration of the study. To then analyze which variables had the most significant effect on *time*, the time to AIDS diagnosis or death, we used a backwards selection method to construct a Cox PH model. Our final model consisted of *tx*, *karnof*, and *cd4* as the most significant explanatory response variables. In other words, these variables had the most significant effect on determining the time to AIDS diagnosis or death of an individual. Furthermore, analyzing these variables individually on their effect on survival using the log-rank and Wilcoxon tests, we can see that these variables are also significant in determining survival probabilities. 
 
