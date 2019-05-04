@@ -20,7 +20,7 @@ Data Analysis Based on study by Hammer, et. al.,1997. *A Controlled Trial of Two
 # Introduction
   HIV (Human Immunodeficiency Virus) is a disease known as an immune system disorder, which causes severe destruction of white blood cells that are responsible for fighting infection. The presence of this disorder is a lead-in for a human to be more prone to infections and cancer diseases. AIDS is the final stage of HIV, which is not always developed in HIV patients. Zidovudine (AZT) is known as antiretroviral medication for prevention of HIV/AIDS, whereas lamuvidine (3TC) is an inhibitor medication that works in decreasing HIV and hepatitis B. Previously, it has been founded that three-drug combinations, in particular, with a previous exposure to AZT, have shown the most significant resulted in reducing HIV-1 RNA concentrations. Therefore, this study used indinavir sulfate (a synthetic antiviral agent that inhibits HIV protease activity) in combination with AZT and 3TC as well as variation of placebo treatments to determine the potency of triple drug therapy in the cases of  advanced HIV-1 patients. The study hypothesized that a three-drug combination, including a HIV-protease inhibitor and two nucleoside analogues (AZT and 3TC) would alter the progression of the HIV-1 disease. The study was successful in reaching significant data of the clinical superiority of a three-drug approach with inidavor over a treatment containing only a two-drug combination.
 
-The current analysis of the data from a study conducted by Hammer et al. in 1997 considers the response variable to be *time*, which here describes the amount of time in days for the time of death, AIDS diagnosis, or the termination of the study. Another important variable used for the analysis is *censor*, which indicates the participants of the study that survived till the termination of the study without dying or being diagnosed AIDS. The study explored the influence of the explanatory variable *tx*. referring to the treatment group that was differentiated into: a control (placebo group) and a treatment group that included IDV (indinavir)
+The current analysis of the data from a study conducted by Hammer et al. in 1997 considers the response variable to be *time*, which here describes the amount of time in days for the time of death, AIDS diagnosis, or the termination of the study. Another important variable used for the analysis is *censor*, which indicates the participants of the study that survived until the termination of the study without dying or being diagnosed AIDS. The study explored the influence of the explanatory variable *tx*, referring to the treatment group that was differentiated into: a control (placebo group) and a treatment group that included IDV (indinavir)
 
 # Methods
 
@@ -214,14 +214,9 @@ survdiff(Surv(time,censor)~karnof, data = aids, rho=1)
 
 ```
 
-<<<<<<< HEAD
-To decide what variables to use in our Cox proportional hazards (PH) model, we can use backwards selection to determine what explanatory variables are most important to the model, along with the likelihood ratio test to compare differences in our models. Using *time* and *censor* as the response variables, we begin with the full model that includes the rest of the variables (minus time_d and censor_d) as the explanatory variables. We remove the variable with the highest $p$-value first and create a new model without this variable. Using the likelihood ratio test between the two models, we then determine whether or not the variable added significance to the model. We continued this process until we arrived at the best model which uses *tx*, the variable that indicates which treatment an individual is on, *karnof*, the variable that measures the initial state of health of the individual prior to the start of the treatment using the Karnofsky Performance Scale rating, and *cd4*, the baseline count of cd4 cells, as the explanatory variables.
-=======
-
 To decide what variables to use in our Cox proportional hazards (PH) model, we can use backwards selection to determine what explanatory variables are most important to the model, along with the likelihood ratio test to compare differences in our models. Using *time* and *censor* as the response variables, we begin with the full model that includes the rest of the variables (minus time_d and censor_d) as the explanatory variables. We remove the variable with the highest $p$ value first and create a new model without this variable. Using the likelihood ratio test between the two models, we then determine whether or not the variable added significance to the model. We continued this process until we arrived at the best model which uses *tx*, the variable that indicates which treatment an individual is on, *karnof*, the variable that measures the initial state of health of the individual prior to the start of the treatment using the Karnofsky Performance Scale rating, and *cd4*, the baseline count of cd4 cells, as the explanatory variables.
->>>>>>> dc6cfd1d8907aa7fd94e9955eabe8b2fd7d366d5
 
-The significance of these variables in our Cox PH model allows us to conclude that there is evidence to suggest that the initial state of health of the individual and their baseline cd4 cell count are significant factors in determing the time it will take an individual to get diagnosed with AIDS or die. The treatment indicator variable, *tx*, had a $p$-value that was not significant. Therefore, we can conclude that being in the treatment group versus being in the control group does not have a significant effect on the time until an AIDS diagnosis or death for an individual.
+  The significance of these variables in our Cox PH model allows us to conclude that there is evidence to suggest that the initial state of health of the individual and their baseline cd4 cell count are significant factors in determing the time it will take an individual to get diagnosed with AIDS or die. The treatment indicator variable, *tx*, had a $p$-value that was not significant. Therefore, we can conclude that being in the treatment group versus being in the control group does not have a significant effect on the time until an AIDS diagnosis or death for an individual when being combined with these other variables.
 
 
 ```{r}
@@ -469,15 +464,13 @@ ggcoxdiagnostics(cph_k, type="schoenfeld")
 Looking at the output results and the graphs for all the variables selected in our Cox PH model: *tx*, *cd4*,and *karnof*. The p-values for the variables are 0.544, 0.207, and 0.92 respectively. All of these values are greater than the $\alpha=0.05$, which indicates that the proportional hazards assumption is met for all variables involved in the model and that the Schoenfeld residuals of the explanatory variables are independent of time.
 
 
-<<<<<<< HEAD
+# Discussion
 
 # Conclusion
-Overall, the purpose of this paper was to
-=======
-=======
-# Conclusion
-Overall, the purpose of this paper was to
->>>>>>> dc6cfd1d8907aa7fd94e9955eabe8b2fd7d366d5
+
+  Overall, the purpose of this paper was to evaluate the data from the study conducted by Hammer et al. in 1997 that was investigating the time to AIDS diagnosis or death of HIV-infected adults based on different individual factors. We began by doing exploratory data analysis on some of the variables in our dataset. From this, we saw that the gender distribution was unbalanced, with 84% of the participants being female as well as unequal race distribution, with White Non-Hispanic identifying individuals accounting for slightly over half of the sample. Looking at the Kaplan-Meier curve, it was interesting to see that the majority of the individuals in the study did not die or were diagnosed with AIDS during the duration of the study. Using time to AIDS defininig diagnosis or death as our response variable in our model
+
+
 
 # References
   
