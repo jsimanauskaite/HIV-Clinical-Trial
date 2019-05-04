@@ -63,19 +63,11 @@ The data set contains a sample size equal to 851 participants and 16 different v
 
 ```{r}
 #Survival Analysis 
-#mutation of age
+
 aids <- read.csv( "http://pages.pomona.edu/~jsh04747/courses/math150/AIDSdata.csv")
 aids <- aids %>% 
-  mutate(age = ifelse(age <= 20, "under20", 
-                             ifelse(age <=30, "20-30",
-                                    ifelse(age <= 40, "30-40",
-                                           ifelse(age <=50, "40-50",
-                                                 ifelse(age <=60, "50-60",
-                                                        ifelse(age <=70, "60-70", 
-                                                               "over70"))))))) %>%
-  mutate(age = factor(age,
-                       levels = c("under20", "20-30", "30-40","40-50", "50-60","60-70","over70")),  
-         sex = ifelse(sex == 2, "male","female"))
+  
+  mutate( sex = ifelse(sex == 2, "male","female")) 
 
 aids <- aids %>% 
   mutate(cd4 = ifelse(cd4 <=50, "0-50", 
@@ -85,7 +77,9 @@ aids <- aids %>%
                                                  ifelse(cd4 <=250, "200-250",
                                                         ifelse(cd4 <=300, "300-350", "350+"))))))) 
 ```
-Since there are many values of the explanatory variable *age* in the original data, we've decided to mutate the variable into age categories from under 20 to over 70 in increments of 10 years. Similar modifications have been made to the baseline *cd4* count, just in increments of 50 up until 350+. Furthermore, we changed the labeling and representation of *sex* into "male" and "female" instead of "1" and "2" in the data.
+
+Since there are many values of the explanatory variable *cd4* in the original data, we've decided to mutate the variable into increments of 50 up until 350+. Furthermore, we changed the labeling and representation of *sex* into "male" and "female" instead of "1" and "2" in the data.
+
 
 ```{r}
 male<-sum(aids$sex=="male")
@@ -192,18 +186,7 @@ survdiff(Surv(time,censor)~tx, data = aids, rho=0)
 'Wilcoxon'
 survdiff(Surv(time,censor)~tx, data = aids, rho=1)
 ```
-The Kaplan-Meier curves for survival probability based on *age* as an explanatory variable, with ether a grouped or un-grouped methods. If we leave the variable unchanged (un-grouped), according to log-rank and Wilcoxon tests, we get p-values of 0.008 and 0.009 respectively, (<0.05), thus rejecting the null of no difference, therefore it is considered a significant variable in the data set. (*This graph and resulting values are not shown due to the extensiveness of the data output*) However, with grouping of the age variable, we achieve a more concise, yet a non-significant Kaplan-Meier distribution, where the p-values in log-rank and Wilcoxon tests are equal to 0.3, therefore, failing to reject the null of no difference, indicating that it has no significant effect on the overall survival probability. 
-```{r}
-fit2 <- survfit(Surv(time,censor)~age, data = aids)
-ggsurvplot(fit2,data = aids,conf.int = FALSE) + ggtitle("Age")
 
-'Log-Rank'
-survdiff(Surv(time,censor)~age, data = aids, rho=0)
-'Wilcoxon'
-survdiff(Surv(time,censor)~age, data = aids, rho=1)
-
-
-```
 The following graph is a representation of the Kaplan-Meier survival probability based on the Baseline CD4. Due to the close proximity of the curves it's harder to see the significance of the differences. However, according to the log-rank test, we see that the p-value for the test statistic is equal to 5e-07  (<0.05), thus we can reject the null hypothesis, The Wilcoxon test  again provides us with a small p-value of 5e-07, which again rejects the null and goes in agreement with our primary conclusion that the curves are significantly different.
 
 ```{r}
@@ -231,9 +214,15 @@ survdiff(Surv(time,censor)~karnof, data = aids, rho=1)
 
 ```
 
+<<<<<<< HEAD
 To decide what variables to use in our Cox proportional hazards (PH) model, we can use backwards selection to determine what explanatory variables are most important to the model, along with the likelihood ratio test to compare differences in our models. Using *time* and *censor* as the response variables, we begin with the full model that includes the rest of the variables (minus time_d and censor_d) as the explanatory variables. We remove the variable with the highest $p$-value first and create a new model without this variable. Using the likelihood ratio test between the two models, we then determine whether or not the variable added significance to the model. We continued this process until we arrived at the best model which uses *tx*, the variable that indicates which treatment an individual is on, *karnof*, the variable that measures the initial state of health of the individual prior to the start of the treatment using the Karnofsky Performance Scale rating, and *cd4*, the baseline count of cd4 cells, as the explanatory variables.
+=======
 
-The significance of these variables in our Cox PH model allows us to conclude that there is evidence to suggest that the initial state of health of the individual and their baseline cd4 cell count are significant factors in determing the time it will take an individual to get diagnosed with AIDS or die. The treatment indicator variable, *tx*, had a $p$-value that was not significant. Therefore, we can conclude that being in the treatment group versus being in the control group does not have a significant effect on the time until an AIDS diagnosis or death for an individual. 
+To decide what variables to use in our Cox proportional hazards (PH) model, we can use backwards selection to determine what explanatory variables are most important to the model, along with the likelihood ratio test to compare differences in our models. Using *time* and *censor* as the response variables, we begin with the full model that includes the rest of the variables (minus time_d and censor_d) as the explanatory variables. We remove the variable with the highest $p$ value first and create a new model without this variable. Using the likelihood ratio test between the two models, we then determine whether or not the variable added significance to the model. We continued this process until we arrived at the best model which uses *tx*, the variable that indicates which treatment an individual is on, *karnof*, the variable that measures the initial state of health of the individual prior to the start of the treatment using the Karnofsky Performance Scale rating, and *cd4*, the baseline count of cd4 cells, as the explanatory variables.
+>>>>>>> dc6cfd1d8907aa7fd94e9955eabe8b2fd7d366d5
+
+The significance of these variables in our Cox PH model allows us to conclude that there is evidence to suggest that the initial state of health of the individual and their baseline cd4 cell count are significant factors in determing the time it will take an individual to get diagnosed with AIDS or die. The treatment indicator variable, *tx*, had a $p$-value that was not significant. Therefore, we can conclude that being in the treatment group versus being in the control group does not have a significant effect on the time until an AIDS diagnosis or death for an individual.
+
 
 ```{r}
 ### COX PH MODEL USING BACKWARDS SELECTION ####
@@ -325,7 +314,7 @@ s9 <- 2*(cp_red8$loglik[2]-cp_red9$loglik[2])
 1-pchisq(s9,1)
 ```
 
-To better understand how much the model fit changes with each different explanatory variable, we can use the graphical representation of the Aalen additive regression model. The Aalen model allows for time-varying covariate effects, while the Cox model allows only a common time-dependence through the baseline. In the Aalen model, we have the weighted comparisons of the crude estimate of the hazard rate of each group as compared to a baseline group, which here is defined as the estimate. As we can see, the selected explanatory variables in our model all have an inverse coefficient correlation with the baseline intercept. The slope of an estimated cumulative regression function is positive when covariate increases and this fact correspond to an increasing hazard rate. On the other hand, if the slope is negative while the covariate increases, then this fact points to a decreasing hazard rate.
+To better understand how much the model fit changes with each different explanatory variable, we can use the graphical representation of the Aalen additive regression model. The Aalen model allows for time-varying covariate effects, while the Cox model allows only a common time-dependence through the baseline (Aalen, 1984). In the Aalen model, we have the weighted comparisons of the crude estimate of the hazard rate of each group as compared to a baseline group, which here is defined as the estimate. As we can see, the selected explanatory variables in our model all have an inverse coefficient correlation with the baseline intercept. The slope of an estimated cumulative regression function is positive when covariate increases and this fact correspond to an increasing hazard rate. On the other hand, if the slope is negative while the covariate increases, then this fact points to a decreasing hazard rate (Bhattacharyya, M., & Klein, J. P.,2005)
 
 
 ```{r}
@@ -345,7 +334,7 @@ autoplot(aa_fit2) + labs(x = "time", y = "coefficient")
 
 The Aalen model assumes that the cumulative hazard $H(t)$ for a subject can be expressed as $a(t)$ + X $B(t)$, where $a(t)$ is a time-dependent intercept term, X is the vector of covariates for the subject possibly time-dependent, and $B(t)$ is a time-dependent matrix of coefficients.
 
-The plots show how the effects of the covariates change over time. 
+The plots show how the effects of the covariates change over time. The covariates that we chose for our model: *tx*, *cd4*, and *karnof*, show the most distinct slope while looking at the aalen plots of most of the explanatory variables. They are all related in that in comparison with the interceipt slope, which shows a steep positive slope, these three explanatory variables all present a somewhat inverse - steep negative slope.
 
 
 #Patricia's "Something New": Power analysis using simulated survival data
@@ -386,25 +375,10 @@ simoutput%>%dplyr::filter(term=="X3")%>%dplyr::summarize(sum(p.value<0.05))
 From the output above, we can see that the power of each of the variables is not very big. The biggest power obtained is 55%, which comes from the *tx* variable. For the other two variables, power is very small. We can also see that *tx* has the largest beta coefficient and the largest power. For bigger beta coefficients we get a larger power because there is a larger effect size. In general, a power of 80% or more is desirable and given that most of our variables return an insignificant power, we would not reject our null hypothesis most of the time. To increase power, we would either have to increase our sample size, $n$, or increase the effect size.
 
 
-References Used:
-
-1. https://cran.r-project.org/web/packages/coxed/vignettes/simulating_survival_data.html
-2. http://www.icssc.org/documents/advbiosgoa/tab%2026.00_survss.pdf
-
-
 # Juste's "Something New": The Schoenfeld Residuals for the Cox PH model
 
   Cox proportional hazards (PH) model is considered a great way to identify combined effects of several covariates on the relative risk (hazard). This model assumes that the hazards of the different strata formed by the levels of the covariates are proportional at a particular point in time. This proportional hazards assumption is particularly important and can be tested via three different classes of tests. The first class is focused on the piece-wise estimation of models for subsets of data defined by stratification of time. The second one considers the interactions between covariates and some function of time. Final, third one is based on examinations of regression residuals. The Schoenfeld Residuals are a part of the third class of proportional hazard assumption testing and I will be exploring it in order to be able to check for the validity of the PH assumption in the current and future data set analyses. This topic is particularly important in relation to survival analysis since it provides an idea of whether the model is appropriate for the data set at hand and whether some covariates should be considered as variants of time in order to supply the best model for prediction of proportional hazards.
   Taking a completely new model of analyzing survival data is particularly difficult since the mathematical derivations and notations are also very varied from what we have seen in class. Although, I do remember some of the ideas behind parametric functions, their applications to statistical models are much more challenging than I have expected. Therefore, it will require me a lot of time and extensive research to be able to understand and learn how to apply this model to our data and other instances of survival analysis.
-
-### Resources to learn about the topic.
-
-I have been researching articles and scientific journals that provide insights into the Schoenfeld residuals and their use in the Cox PH model. 
-Sources include: 
-
-1. https://onlinelibrary.wiley.com/doi/full/10.1111/ajps.12176
-2. https://rstudio-pubs-static.s3.amazonaws.com/39354_34153ff19e624116bd2fbdec7d2534aa.html 
-
 
 ### Explanation of the Theory Behind Schoenfeld Residuals
 
@@ -463,13 +437,13 @@ Following the calculations, the residuals are plotted against time in order to t
 
 ### HIV Data Cox PH model analysis using Schoenfeld Residuals
 
-Schoenfeld Residuals applied to our best Cox PH model for AIDS data where, we have an additive model of explanatory variables: baseline CD4 count, age,treatment group, and karnofsky performance scale score:
+Schoenfeld Residuals applied to our best Cox PH model for AIDS data where, we have an additive model of explanatory variables: baseline CD4 count, treatment group, and karnofsky performance scale score:
 
 The *cox.zph()* function provides a Goodness-of-Fit (GOF) test, which tests the correlation between Schoenfeld residuals and survival time. Here, taking with an alpha level of $\alpha=0.05$ the p-value below this would reject the null of independence, thus indicating that the residuals are in fact dependent on time and thus the PH assumption is not satisfied. If the p-value is greater than $\alpha$, the null of independence is accepted and thus the PH assumption is met. 
 
 A graphical representation is achieved using either *ggcoxzph()* or *ggcoxdiagnostics()* functions, that overall should show no pattern in the graphs in order to indicate a PH assumption. In the *ggcoxzph()* function, the solid line is a smoothing spline fit to the plot, with the dashed lines representing a +/- 2-standard-error. Whereas, in *ggcoxdiagnostics()* function graph, the dashed blue line represents the fit to the plot, via red dashed line representing the y=0 point of reference and the grey area around the blue line representing  the +/- 2-standard-error (Sestelo, 2017).
 ```{r}
-knitr::opts_chunk$set(message=FALSE, warning=FALSE, fig.height=3, fig.width=5, 
+knitr::opts_chunk$set(message=FALSE, warning=FALSE, fig.height=2, fig.width=4, 
                       fig.align="center")
 cph_tx <- coxph(Surv(time,censor)~ tx, data = aids)
 zph_tx <- cox.zph(cph_tx)
@@ -490,28 +464,29 @@ ggcoxzph(zph_k, point.size = 1, point.shape = 10)
 ggcoxdiagnostics(cph_k, type="schoenfeld")
 
 
-cph_a <- coxph(Surv(time,censor)~ age, data = aids)
-zph_a <- cox.zph(cph_a)
-zph_a
-ggcoxzph(zph_a, point.size = 1, point.shape = 10)
-ggcoxdiagnostics(cph_a, type="schoenfeld")
-
 ```
 
-Looking at the output results and the graphs for all the variables selected in our Cox PH model: *tx*, *cd4*,*karnof*, and *age*. The p-values for the variables are 0.544, 0.207, 0.92, and 0.161 respectively. All of these values are greater than the $\alpha=0.05$, which indicates that the proportional hazards assumption is met for all variables involved in the model and that the Schoenfeld residuals of the explanatory variables are independent of time.
+Looking at the output results and the graphs for all the variables selected in our Cox PH model: *tx*, *cd4*,and *karnof*. The p-values for the variables are 0.544, 0.207, and 0.92 respectively. All of these values are greater than the $\alpha=0.05$, which indicates that the proportional hazards assumption is met for all variables involved in the model and that the Schoenfeld residuals of the explanatory variables are independent of time.
 
 
-# Discussion
-
+<<<<<<< HEAD
 
 # Conclusion
 Overall, the purpose of this paper was to
 =======
+=======
+# Conclusion
+Overall, the purpose of this paper was to
+>>>>>>> dc6cfd1d8907aa7fd94e9955eabe8b2fd7d366d5
 
 # References
   
+   Aalen Odd O.: A Linear Regression Model for the Analysis of Life Times, Statistics in Medicine, (1989) vol 8, 907-925
+  
   
   A Short-Term Study of the Safety, Pharmacokinetics, and Efficacy of Ritonavir, an Inhibitor of HIV-1 Protease | NEJM. (n.d.). Retrieved April 29, 2019, from https://www.nejm.org/doi/full/10.1056/NEJM199512073332303
+  
+  Bhattacharyya, M., & Klein, J. P. (2005). A note on testing in Aalen's additive hazards regression models. Statistics in medicine, 24(14), 2235-2240.
   
   
   Başar, E. (2017). Aalen’s Additive, Cox Proportional Hazards and the Cox-Aalen Model: Application to Kidney Transplant Data. Sains Malaysiana, 46(3), 469–476. https://doi.org/10.17576/jsm-2017-4603-15
@@ -538,16 +513,7 @@ Overall, the purpose of this paper was to
   Sestelo, Marta, A short course on Survival Analysis applied to the Financial Industry. (2017). Retrieved May 3, 2019, from https://bookdown.org/sestelo/sa_financial/how-to-evaluate-the-ph-assumption.html
   
   
-  Therneau, T. M., & Grambsch, P. M. (2000a). Multiple Events per Subject. In T. M. Therneau & P. M. Grambsch (Eds.), Modeling Survival Data: Extending the Cox Model (pp. 169–229). https://doi.org/10.1007/978-1-4757-3294-8_8
-
-
-  Therneau, T. M., & Grambsch, P. M. (2000b). Residuals. In T. M. Therneau & P. M. Grambsch (Eds.), Modeling Survival Data: Extending the Cox Model (pp. 79–86). https://doi.org/10.1007/978-1-4757-3294-8_4
-  
-  
-  Therneau, T. M., & Grambsch, P. M. (2000c). Testing Proportional Hazards. In T. M. Therneau & P. M. Grambsch (Eds.), Modeling Survival Data: Extending the Cox Model (pp. 127–152). https://doi.org/10.1007/978-1-4757-3294-8_6
-
-
-  Therneau, T. M., & Grambsch, P. M. (2000d). The Cox Model. In T. M. Therneau & P. M. Grambsch (Eds.), Modeling Survival Data: Extending the Cox Model (pp. 39–77). https://doi.org/10.1007/978-1-4757-3294-8_3
+  Therneau, T. M., & Grambsch, P. M. (2000a). Multiple Events per Subject. In T. M. Therneau & P. M. Grambsch (Eds.), Modeling Survival Data: Extending the Cox Model (pp. 39–229). https://doi.org/10.1007/978-1-4757-3294-8_8
 
 
   Weaver, M. A. (n.d.). Sample Size Calculations for Survival Analysis. 22.
